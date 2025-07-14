@@ -1,13 +1,13 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const loadFeedBtn = document.getElementById('load-feed');
     const rssUrlInput = document.getElementById('rss-url');
     const newsContainer = document.getElementById('news-container');
-    
+
     // Load default feed on page load
     loadFeed(rssUrlInput.value);
-    
+
     // Add event listener for the load button
-    loadFeedBtn.addEventListener('click', function() {
+    loadFeedBtn.addEventListener('click', function () {
         const url = rssUrlInput.value.trim();
         if (url) {
             loadFeed(url);
@@ -15,50 +15,50 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid RSS feed URL');
         }
     });
-    
+
     function loadFeed(feedUrl) {
         // Show loading state
         newsContainer.innerHTML = '<div class="loading">Loading news feed...</div>';
-        
-        // Use a CORS proxy to avoid CORS issues (for development only)
-        const proxyUrl = 'https://api.allorigins.win/get?url=';
-        const encodedUrl = encodeURIComponent(feedUrl);
-        
-        fetch(`${proxyUrl}${encodedUrl}`)
+
+
+        fetch(`http://localhost:3001/api/rss?url=${encodeURIComponent(feedUrl)}`)
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
+                return response.text(); // ✅ FIXED: parse as text (XML)
             })
-            .then(data => {
-                if (data.contents) {
-                    return parseRSS(data.contents);
-                } else {
-                    throw new Error('No contents in response');
-                }
-            })
-            .then(items => {
+            .then(xmlString => {
+                const items = parseRSS(xmlString); // ✅ parse the XML manually
                 displayNews(items);
             })
             .catch(error => {
                 console.error('Error fetching RSS feed:', error);
                 newsContainer.innerHTML = `<div class="loading">Error loading feed: ${error.message}</div>`;
             });
+
     }
-    
+
     function parseRSS(xmlString) {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-        
-        const items = xmlDoc.querySelectorAll('item');
+        console.log('Parsed XML Document:', xmlDoc); // Log the parsed XML for debugging
+
+        var items = xmlDoc.querySelectorAll('item');
+        if (items.length === 0) {
+            items = xmlDoc.querySelectorAll('entry'); // For Atom feeds
+        }
         const newsItems = [];
-        
+
         items.forEach((item, index) => {
             if (index >= 10) return; // Limit to 10 items
-            
+            console.log('Parsing item:', item); // Log the item for debugging
+
             const title = item.querySelector('title')?.textContent || 'No title';
             const description = item.querySelector('description')?.textContent || 'No description';
-            const link = item.querySelector('link')?.textContent || '#';
-            
+            var link = item.querySelector('link')?.textContent || '#';
+            if(link === '#') {
+                link = item.querySelector('link')?.getAttribute("href") || '#'
+            }
+
             // Extract image - different RSS feeds may have different formats
             let imageUrl = '';
             const enclosure = item.querySelector('enclosure');
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     imageUrl = imgMatch[1];
                 }
             }
-            
+
             newsItems.push({
                 title,
                 description: description.replace(/<[^>]*>?/gm, ''), // Remove HTML tags
@@ -79,26 +79,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 imageUrl
             });
         });
-        
+
         return newsItems;
     }
-    
+
     function displayNews(items) {
+        console.log('Displaying news items:', items); // Log the items for debugging
         if (items.length === 0) {
             newsContainer.innerHTML = '<div class="loading">No news items found in the feed</div>';
             return;
         }
-        
+
         newsContainer.innerHTML = '';
-        
+
         items.forEach(item => {
             const card = document.createElement('article');
             card.className = 'news-card';
-            
-            const image = item.imageUrl 
+            console.log('News Item:', item); // Log the news item for debugging
+
+            const image = item.imageUrl
                 ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">`
                 : `<div class="news-image" style="background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>`;
-            
+
             card.innerHTML = `
                 ${image}
                 <div class="news-content">
@@ -107,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="${item.link}" class="news-link" target="_blank" rel="noopener noreferrer">Read more</a>
                 </div>
             `;
-            
+
             newsContainer.appendChild(card);
         });
     }
