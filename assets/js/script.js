@@ -2,9 +2,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadFeedBtn = document.getElementById('load-feed');
     const rssUrlInput = document.getElementById('rss-url');
     const newsContainer = document.getElementById('news-container');
+    const feedHistoryList = document.getElementById('feed-history');
+    const saveFeedBtn = document.getElementById('save-feed');
+    const clearHistoryBtn = document.getElementById('clear-history');
 
     // Load default feed on page load
     loadFeed(rssUrlInput.value);
+    loadFeedHistory();
 
     // Add event listener for the load button
     loadFeedBtn.addEventListener('click', function () {
@@ -16,76 +20,68 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Save feed to history
+    saveFeedBtn.addEventListener('click', function() {
+        const url = rssUrlInput.value.trim();
+        if (url) {
+            saveFeedToHistory(url);
+        } else {
+            alert('Please enter a valid RSS feed URL');
+        }
+    });
+
+    // Clear feed history
+    clearHistoryBtn.addEventListener('click', function() {
+        localStorage.removeItem('rssFeedHistory');
+        feedHistoryList.innerHTML = '';
+    });
+
+    function loadFeedHistory() {
+        const history = JSON.parse(localStorage.getItem('rssFeedHistory')) || [];
+        feedHistoryList.innerHTML = '';
+        
+        history.forEach(url => {
+            const li = document.createElement('li');
+            li.textContent = url;
+            li.addEventListener('click', () => {
+                rssUrlInput.value = url;
+                loadFeed(url);
+            });
+            feedHistoryList.appendChild(li);
+        });
+    }
+
+    function saveFeedToHistory(url) {
+        const history = JSON.parse(localStorage.getItem('rssFeedHistory')) || [];
+        if (!history.includes(url)) {
+            history.unshift(url); // Add to beginning
+            localStorage.setItem('rssFeedHistory', JSON.stringify(history));
+            loadFeedHistory();
+        }
+    }
+
     function loadFeed(feedUrl) {
         // Show loading state
         newsContainer.innerHTML = '<div class="loading">Loading news feed...</div>';
 
-
         fetch(`http://localhost:3001/api/rss?url=${encodeURIComponent(feedUrl)}`)
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
-                return response.text(); // ✅ FIXED: parse as text (XML)
+                return response.json();
             })
-            .then(xmlString => {
-                const items = parseRSS(xmlString); // ✅ parse the XML manually
+            .then(items => {
                 displayNews(items);
+                saveFeedToHistory(feedUrl);
             })
             .catch(error => {
                 console.error('Error fetching RSS feed:', error);
-                newsContainer.innerHTML = `<div class="loading">Error loading feed: ${error.message}</div>`;
+                newsContainer.innerHTML = `<div class="error">Error loading feed: ${error.message}</div>`;
             });
-
     }
 
-    function parseRSS(xmlString) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
-        console.log('Parsed XML Document:', xmlDoc); // Log the parsed XML for debugging
-
-        var items = xmlDoc.querySelectorAll('item');
-        if (items.length === 0) {
-            items = xmlDoc.querySelectorAll('entry'); // For Atom feeds
-        }
-        const newsItems = [];
-
-        items.forEach((item, index) => {
-            if (index >= 10) return; // Limit to 10 items
-            console.log('Parsing item:', item); // Log the item for debugging
-
-            const title = item.querySelector('title')?.textContent || 'No title';
-            const description = item.querySelector('description')?.textContent || 'No description';
-            var link = item.querySelector('link')?.textContent || '#';
-            if(link === '#') {
-                link = item.querySelector('link')?.getAttribute("href") || '#'
-            }
-
-            // Extract image - different RSS feeds may have different formats
-            let imageUrl = '';
-            const enclosure = item.querySelector('enclosure');
-            if (enclosure && enclosure.getAttribute('type')?.startsWith('image/')) {
-                imageUrl = enclosure.getAttribute('url');
-            } else {
-                // Try to extract image from description (common in BBC feed)
-                const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
-                if (imgMatch) {
-                    imageUrl = imgMatch[1];
-                }
-            }
-
-            newsItems.push({
-                title,
-                description: description.replace(/<[^>]*>?/gm, ''), // Remove HTML tags
-                link,
-                imageUrl
-            });
-        });
-
-        return newsItems;
-    }
-
-    function displayNews(items) {
-        console.log('Displaying news items:', items); // Log the items for debugging
-        if (items.length === 0) {
+    function displayNews(items) { 
+        console.log('Displaying news items:', items);
+        if (!items || items.length === 0) {
             newsContainer.innerHTML = '<div class="loading">No news items found in the feed</div>';
             return;
         }
@@ -95,7 +91,11 @@ document.addEventListener('DOMContentLoaded', function () {
         items.forEach(item => {
             const card = document.createElement('article');
             card.className = 'news-card';
-            console.log('News Item:', item); // Log the news item for debugging
+
+            // Clean description by removing HTML tags and truncating
+            const cleanDescription = item.description 
+                ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
+                : 'No description available';
 
             const image = item.imageUrl
                 ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">`
@@ -104,9 +104,9 @@ document.addEventListener('DOMContentLoaded', function () {
             card.innerHTML = `
                 ${image}
                 <div class="news-content">
-                    <h3 class="news-title">${item.title}</h3>
-                    <p class="news-description">${item.description.substring(0, 150)}...</p>
-                    <a href="${item.link}" class="news-link" target="_blank" rel="noopener noreferrer">Read more</a>
+                    <h3 class="news-title">${item.title || 'No title'}</h3>
+                    <p class="news-description">${cleanDescription}</p>
+                    <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read more</a>
                 </div>
             `;
 
