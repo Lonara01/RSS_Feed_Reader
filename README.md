@@ -1,29 +1,20 @@
 
----
+    ---
 
-## 4. Örnek Basit README.md İçeriği
+    ```markdown
+    # 📡 RSS Feed Project
 
-```markdown
-# 📡 RSS Feed Project
+    **This project reads RSS feeds and converts them to JSON.**
 
-This project reads RSS feeds and converts them to JSON.
+    ## How to Use
 
-## How to Use
+    1. Clone the repo  
+    2. Run `npm install`  
+    3. Run `node index.js`
 
-1. Clone the repo  
-2. Run `npm install`  
-3. Run `node index.js`
+    ##  Table for url
 
-## Sample Table
-
-| Feed Name | URL                    |
-| --------- | ---------------------- |
-| BBC News  | https://bbc.co.uk/rss   |
-| CNN       | https://cnn.com/rss     |
-
-## Diagram
-
-```mermaid
-graph TD;
-  Start-->Parse;
-  Parse-->Output;
+    | Feed Name | URL                    |
+    | --------- | ---------------------- |
+    | BBC News  | https://bbc.co.uk/rss   |
+    | CNN       | https://cnn.com/rss     |
