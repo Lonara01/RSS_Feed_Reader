@@ -7,7 +7,8 @@
     "build:css": "sass assets/scss/main.scss dist/css/style.css --style compressed",
     "build:js": "terser assets/js/script.js -o dist/js/script.min.js",
     "build": "npm run build:css && npm run build:js",
-    "watch": "sass --watch assets/scss/main.scss dist/css/style.css"
+    "watch": "sass --watch assets/scss/main.scss dist/css/style.css",
+     "minify": "terser dist/js/for_future.js -o dist/js/for_future.min.js -c -m"
   },
   "keywords": [],
   "author": "",
