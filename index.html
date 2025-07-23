@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RSS Feed News</title>
     <link rel="stylesheet" href="dist/css/style.css">
 </head>
+
 <body>
     <header class="header">
         <h1>RSS Feed News</h1>
         <div class="feed-controls">
-            <input type="text" id="rss-url" placeholder="Enter RSS Feed URL" value="https://feeds.bbci.co.uk/news/rss.xml">
+            <input type="text" id="rss-url" placeholder="Enter RSS Feed URL"
+                value="https://feeds.bbci.co.uk/news/rss.xml">
             <button id="load-feed">Load Feed</button>
         </div>
     </header>
 
+
+    <!-- <section class="rss-manager">
+        <form id="rss-form">
+            <input type="url" id="new-rss-url" placeholder="Add new RSS feed URL" required>
+            <button type="submit">Add Feed</button>
+        </form>
+
+        <div id="rss-list">
+             <h4> List of saved feeds with checkboxes </h4>
+        </div>
+    </section> -->
     <main class="news-grid" id="news-container">
         <!-- News cards will be inserted here by JavaScript -->
     </main>
 
-   <script src="assets/js/script.js"></script>
+    <script src="dist/js/script.min.js"></script>
 
 </body>
+
 </html>

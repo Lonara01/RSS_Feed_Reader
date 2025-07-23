@@ -1,0 +1,12 @@
+{
+    "require": {
+        "debril/feed-io": "^6.0",
+        "symfony/http-client": "^7.3",
+        "simplepie/simplepie": "^1.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

@@ -20,6 +20,7 @@
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "rss-parser": "^3.13.0"
+    "feedparser": "^2.2.10",
+    "node-fetch": "^2.7.0"
   }
 }
