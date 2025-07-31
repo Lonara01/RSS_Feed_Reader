@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "---",
   "devDependencies": {
     "terser": "^5.43.1"
   },
@@ -21,6 +21,18 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "feedparser": "^2.2.10",
+    "gulp": "^5.0.1",
+    "gulp-csso": "^4.0.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-terser": "^2.1.0",
     "node-fetch": "^2.7.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lonara01/News.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lonara01/News/issues"
+  },
+  "homepage": "https://github.com/Lonara01/News#readme"
 }

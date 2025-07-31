@@ -2,10 +2,17 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RSS Feed News</title>
-    <link rel="stylesheet" href="dist/css/style.css">
+    <link rel="stylesheet" href="dist/css/style.css" />
+    
+    <link rel="icon" type="image/png" href="dist/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="dist/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="dist/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="dist/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="RSS " />
+    <link rel="manifest" href="dist/favicon/site.webmanifest" />
 </head>
 
 <body>
@@ -13,28 +20,32 @@
         <h1>RSS Feed News</h1>
         <div class="feed-controls">
             <input type="text" id="rss-url" placeholder="Enter RSS Feed URL"
-                value="https://feeds.bbci.co.uk/news/rss.xml">
+                value="https://feeds.bbci.co.uk/news/rss.xml" />
             <button id="load-feed">Load Feed</button>
         </div>
     </header>
 
-
-    <!-- <section class="rss-manager">
+    <!-- 🔻 NEW: Feed manager section -->
+    <section class="rss-manager">
         <form id="rss-form">
-            <input type="url" id="new-rss-url" placeholder="Add new RSS feed URL" required>
+            <input type="url" id="new-rss-url" placeholder="Add new RSS feed URL" required />
             <button type="submit">Add Feed</button>
         </form>
 
         <div id="rss-list">
-             <h4> List of saved feeds with checkboxes </h4>
+            <h4>Saved Feeds</h4>
+            <ul id="saved-feeds-list">
+                <!-- Checkbox'lı feed listesi burada görünecek -->
+            </ul>
         </div>
-    </section> -->
+    </section>
+    <!-- 🔺 END NEW -->
+
     <main class="news-grid" id="news-container">
-        <!-- News cards will be inserted here by JavaScript -->
+        <!-- Haber kartları burada gösterilecek -->
     </main>
 
     <script src="dist/js/script.min.js"></script>
-
 </body>
 
 </html>

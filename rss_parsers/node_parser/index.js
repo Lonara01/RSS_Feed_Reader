@@ -23,6 +23,7 @@ app.get('/api/rss', async (req, res) => {
       title: item.title || '',
       description: item.summary || item.description || '',
       link: item.link || '',
+      pubDate: item.date || item.pubdate || item.pubDate || 'Unknown date',
       imageUrl: item.image?.url || item.enclosures?.find(e => e.type?.startsWith('image/'))?.url || ''
     }));
 
