@@ -5,7 +5,7 @@ const htmlmin = require('gulp-htmlmin');
 
 // JavaScript minify task
 gulp.task('minify-js', () => {
-  return gulp.src('src/js/script.js') // or use 'src/js/*.js' if you want all JS files
+  return gulp.src('src/js/*.js') // or use 'src/js/*.js' if you want all JS files
     .pipe(terser())
     .pipe(gulp.dest('dist/js'));
 });
@@ -17,12 +17,6 @@ gulp.task('minify-css', () => {
     .pipe(gulp.dest('dist/css'));
 });
 
-// HTML minify task
-gulp.task('minify-html', () => {
-  return gulp.src('src/index.html')
-    .pipe(htmlmin({ collapseWhitespace: true }))
-    .pipe(gulp.dest('dist'));
-});
 
 // 🕵️‍♀️ Watcher task
 gulp.task('watch', () => {
