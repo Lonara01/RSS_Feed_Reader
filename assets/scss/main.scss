@@ -1,12 +1,7 @@
-// Variables
-$primary-color: #90e0ef;
-$secondary-color: #0096c7;
-$text-color:#ffffff;
-$light-gray: #0D00A4;
-$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+@use "variables";
 
 // Base styles
-* { 
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -14,7 +9,7 @@ $card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 body {
-    background-color:$secondary-color;
+    background-color: variables.$secondary-color;
     line-height: 1.6;
     padding: 20px;
 }
@@ -23,29 +18,52 @@ body {
     text-align: center;
     margin-bottom: 0.8rem;
     padding: 0.9rem;
-    background-color:$primary-color;
+    background-color: variables.$primary-color;
     border-radius: 8px;
-    box-shadow: $card-shadow;
+    box-shadow: variables.$card-shadow;
 
     h1 {
-        color:$light-gray;
+        color: variables.$light-gray;
         margin-bottom: 1rem;
     }
 }
 
 #rss-list {
-    background-color:$primary-color;
+    background-color: variables.$primary-color;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+    width: 90%;
+    max-width: 90%;
     margin: 1rem auto;
+
+    .rss-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        #rss-list-collapse-btn {
+            padding: 0.5rem 1rem;
+            background-color: variables.$secondary-color;
+            color: variables.$text-color;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: variables.$secondary-color;
+            }
+        }
+    }
+
 }
 
 #rss-list h4 {
     margin-bottom: 0.75rem;
     font-size: 1.2rem;
-    color:$light-gray;
+    color: variables.$light-gray;
     text-align: center;
 }
 
@@ -53,12 +71,21 @@ body {
     list-style-type: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#saved-feeds-list.collapsed {
+    max-height: 0;
 }
 
 #saved-feeds-list li {
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.5rem;
-    background-color:$secondary-color;
+    background-color: variables.$secondary-color;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -82,31 +109,35 @@ body {
 
     button {
         padding: 0.5rem 1.5rem;
-        background-color: $secondary-color;
-        color: $text-color;
+        background-color: variables.$secondary-color;
+        color: variables.$text-color;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s;
 
         &:hover {
-            background-color: $secondary-color;
+            background-color: variables.$secondary-color;
         }
     }
 }
+
 .rss-manager {
-    max-width: 500px;
+    width: 100%;
+    max-width: 100%;
     margin: 2rem auto;
     padding: 1rem;
-    background-color:$text-color;
+    background-color: variables.$text-color;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #rss-form {
+    width: 600px;
     display: flex;
     gap: 0.5rem;
-   
+    margin: 0px auto;
+
 }
 
 #new-rss-url {
@@ -120,12 +151,13 @@ body {
 }
 
 #new-rss-url:focus {
-    border-color: #03485f; /* Matches your header color */
+    border-color: #03485f;
+    /* Matches your header color */
 }
 
 #rss-form button {
     padding: 0.5rem 1rem;
-    background-color: $secondary-color;
+    background-color: variables.$secondary-color;
     color: white;
     border: none;
     border-radius: 6px;
@@ -147,9 +179,9 @@ body {
         background-color: white;
         border-radius: 1px;
         overflow: hidden;
-        box-shadow: $card-shadow;
+        box-shadow: variables.$card-shadow;
         transition: transform 0.5s;
-         border-radius: 2%;
+        border-radius: 2%;
 
         &:hover {
             transform: translateY(-5px);
@@ -168,7 +200,7 @@ body {
             .news-title {
                 font-size: 1.2rem;
                 margin-bottom: 0.5rem;
-                color: $primary-color;
+                color: variables.$primary-color;
             }
 
             .news-description {
@@ -179,7 +211,7 @@ body {
 
             .news-link {
                 display: inline-block;
-                color: $secondary-color;
+                color: variables.$secondary-color;
                 text-decoration: none;
                 font-weight: bold;
                 font-size: 0.9rem;
@@ -188,8 +220,9 @@ body {
                     text-decoration: underline;
                 }
             }
+
             .news-date {
-                color:#0096c7;
+                color: variables.$secondary-color;
             }
         }
     }

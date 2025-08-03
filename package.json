@@ -2,29 +2,17 @@
   "name": "project",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "sass assets/scss/main.scss dist/css/style.css --style compressed",
-    "build:js": "terser assets/js/script.js -o dist/js/script.min.js",
-    "build": "npm run build:css && npm run build:js",
-    "watch": "sass --watch assets/scss/main.scss dist/css/style.css"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "---",
-  "devDependencies": {
-    "terser": "^5.43.1"
-  },
+  "type": "module",
   "dependencies": {
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "feedparser": "^2.2.10",
-    "gulp": "^5.0.1",
-    "gulp-csso": "^4.0.1",
-    "gulp-htmlmin": "^5.0.1",
-    "gulp-terser": "^2.1.0",
     "node-fetch": "^2.7.0"
   },
   "repository": {
@@ -34,5 +22,17 @@
   "bugs": {
     "url": "https://github.com/Lonara01/News/issues"
   },
-  "homepage": "https://github.com/Lonara01/News#readme"
+  "homepage": "https://github.com/Lonara01/News#readme",
+  "devDependencies": {
+    "gulp": "^5.0.1",
+    "gulp-autoprefixer": "^9.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-javascript-obfuscator": "^1.1.6",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^6.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify-es": "^3.0.0",
+    "sass": "^1.89.2",
+    "gulp-uglify": "^3.0.2"
+  }
 }

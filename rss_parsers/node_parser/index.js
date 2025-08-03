@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const fetch = require('node-fetch'); // Using node-fetch v2 to get Node.js streams
-const FeedParser = require('feedparser');
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch'; // Using node-fetch v2 to get Node.js streams
+import FeedParser from 'feedparser';
 
 const app = express();
 const PORT = 3001;

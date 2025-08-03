@@ -1,29 +1,42 @@
-const gulp = require('gulp');
-const terser = require('gulp-terser');
-const csso = require('gulp-csso');
-const htmlmin = require('gulp-htmlmin');
+import gulp from 'gulp';
+import * as dartSass from 'sass';
+import gulpSass from 'gulp-sass';
+import concat from 'gulp-concat';
+import uglify_es from 'gulp-uglify-es';
+import rename from 'gulp-rename';
+import autoprefixer from 'gulp-autoprefixer';
+import sourcemaps from 'gulp-sourcemaps';
+import JavaScriptObfuscator from 'gulp-javascript-obfuscator';
+
+const { src, dest } = gulp;
+const sass = gulpSass(dartSass);
+const uglify = uglify_es.default;
 
 // JavaScript minify task
 gulp.task('minify-js', () => {
-  return gulp.src('src/js/*.js') // or use 'src/js/*.js' if you want all JS files
-    .pipe(terser())
+  return gulp.src('assets/js/*.js') // or use 'src/js/*.js' if you want all JS files
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    // .pipe(JavaScriptObfuscator())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(sourcemaps.write('./map'))
     .pipe(gulp.dest('dist/js'));
 });
 
 // CSS minify task
 gulp.task('minify-css', () => {
-  return gulp.src('src/css/style.css') // or use 'src/css/*.css'
-    .pipe(csso())
+  return gulp.src('assets/scss/*.scss') // or use 'src/css/*.css'
+    .pipe(sourcemaps.init())
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(sourcemaps.write('./map'))
     .pipe(gulp.dest('dist/css'));
 });
 
 
 // 🕵️‍♀️ Watcher task
-gulp.task('watch', () => {
-  gulp.watch('src/js/script.js', gulp.series('minify-js'));
-  gulp.watch('src/css/style.css', gulp.series('minify-css'));
-  gulp.watch('src/index.html', gulp.series('minify-html'));
+gulp.task('watch-all', () => {
+  gulp.watch('assets/js/*.js', gulp.series('minify-js'));
+  gulp.watch('assets/scss/*.scss', gulp.series('minify-css'));
 });
-
-// 🧪 Optional: Run all + start watching
-gulp.task('default', gulp.parallel('minify-js', 'minify-css', 'minify-html', 'watch'));

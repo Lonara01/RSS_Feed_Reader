@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RSS Feed News</title>
-    <link rel="stylesheet" href="dist/css/style.css" />
-    
+    <link rel="stylesheet" href="dist/css/main.min.css" />
+
     <link rel="icon" type="image/png" href="dist/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="dist/favicon/favicon.svg" />
     <link rel="shortcut icon" href="dist/favicon/favicon.ico" />
@@ -32,8 +32,12 @@
             <button type="submit">Add Feed</button>
         </form>
 
-        <div  id="rss-list">
-            <h4>Saved Feeds</h4>
+        <div id="rss-list">
+            <div class="rss-list-header">
+                <h4>Saved Feeds</h4>
+                <button id="rss-list-collapse-btn">Collapse</button>
+            </div>
+
             <ul id="saved-feeds-list">
                 <!-- Checkbox'lı feed listesi burada görünecek -->
             </ul>

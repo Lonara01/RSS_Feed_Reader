@@ -1,18 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const parserType = 'node'; // We can use 'php' if it needed
+    const FEED_STORAGE_KEY = 'savedFeeds';
+
+
     const loadFeedBtn = document.getElementById('load-feed');
     const rssUrlInput = document.getElementById('rss-url');
     const newsContainer = document.getElementById('news-container');
 
-    const parserType = 'node'; // We can use 'php' if it needed
 
-    const FEED_STORAGE_KEY = 'savedFeeds';
     const feedForm = document.getElementById('rss-form');
     const newFeedInput = document.getElementById('new-rss-url');
     const savedFeedsList = document.getElementById('saved-feeds-list');
+    const collapseButton = document.getElementById('rss-list-collapse-btn');
 
-    loadSavedFeeds(); //  WHEN PAGE LOADED THİS BRİNG OUR FEED AND CHECKBOX 
+    loadSavedFeeds(); //  WHEN PAGE LOADED THIS BRING OUR FEED AND CHECKBOX 
 
-    // (manuel input) WHİCH İS OUR FİRST İNPUT 
+
     loadFeedBtn.addEventListener('click', function () {
         const url = rssUrlInput.value.trim();
         if (url) {
@@ -21,9 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Please enter a valid RSS feed URL');
         }
     });
-
-
-    // Saving a new feed
 
     feedForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -34,6 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
             loadSavedFeeds();
         }
     });
+
+    collapseButton.addEventListener('click', () => {
+        savedFeedsList.classList.toggle('collapsed');
+
+        // Optional: update button label
+        collapseButton.textContent = savedFeedsList.classList.contains('collapsed')
+            ? 'Expand'
+            : 'Collapse';
+    });
+
 
     function saveFeedUrl(url) {
         const feeds = localStorage.getItem(FEED_STORAGE_KEY) ? JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) : [];
@@ -107,18 +117,18 @@ document.addEventListener('DOMContentLoaded', function () {
         newsContainer.innerHTML = ''; // Önceki haberleri temizle
 
         feeds.forEach(feedUrl => {
-            const liID=Math.floor(Math.random() * 100);
+            const liID = Math.floor(Math.random() * 100);
             const li = document.createElement('li');
-            
+
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.checked = true;
-            checkbox.id=liID;
-            
+            checkbox.id = liID;
+
             checkbox.addEventListener('change', () => {
                 reloadEnabledFeeds(); // Checkbox durumu değiştiğinde sadece aktif olanları yükle
             });
-            
+
             const label = document.createElement('label');
             label.textContent = feedUrl;
             label.style.marginLeft = '8px';
@@ -143,4 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+
 });
+
+
