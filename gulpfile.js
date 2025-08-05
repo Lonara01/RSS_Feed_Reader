@@ -17,7 +17,7 @@ gulp.task('minify-js', () => {
   return gulp.src('assets/js/*.js') // or use 'src/js/*.js' if you want all JS files
     .pipe(sourcemaps.init())
     .pipe(uglify())
-    // .pipe(JavaScriptObfuscator())
+    .pipe(JavaScriptObfuscator())
     .pipe(rename({ suffix: '.min' }))
     .pipe(sourcemaps.write('./map'))
     .pipe(gulp.dest('dist/js'));

@@ -45,13 +45,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    function saveFeedUrl(url) {
-        const feeds = localStorage.getItem(FEED_STORAGE_KEY) ? JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) : [];
-        if (!feeds.includes(url)) {
-            feeds.push(url);
-            localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
-        }
+   function saveFeedUrl(url) {
+    const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
+
+    // URL zaten kayıtlı mı kontrol et
+    const exists = feeds.some(feed => feed.url === url);
+    if (!exists) {
+        feeds.push({ url: url, check: true }); // Yeni eklenenler varsayılan olarak 'aktif'
+        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
     }
+}
+
+    
 
     function loadFeed(feedUrl) {
         const phpURL = `https://abddomain.epizy.com/rss/rss_parsers/php_parser/index.php?url=${encodeURIComponent(feedUrl)}`;
@@ -129,30 +134,79 @@ document.addEventListener('DOMContentLoaded', function () {
                 reloadEnabledFeeds(); // Checkbox durumu değiştiğinde sadece aktif olanları yükle
             });
 
+
             const label = document.createElement('label');
             label.textContent = feedUrl;
             label.style.marginLeft = '8px';
             label.setAttribute("for", liID);
 
+
+
+
+
+            // --- DELETE butonunu oluştur ve davranışını tanımla (başlangıç) ---
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '🗑️';
+            deleteBtn.style.marginLeft = '10px';
+            deleteBtn.style.background = 'transparent';
+            deleteBtn.style.border = 'none';
+            deleteBtn.style.cursor = 'pointer';
+            deleteBtn.style.fontSize = '16px';
+
+            deleteBtn.addEventListener('click', () => {
+                Swal.fire({
+                    title: "Do you really want to delet this ?",
+                    text: "you are deleting this URL ",
+                    icon: "warning",
+                    showCancelButton: "true",
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes Please delete that",
+                    cancelButtonText: "Forget about that!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        /*if user confirmed we will delelte*/
+                        const updatedFeeds = feeds.filter(f => f !== feedUrl);
+                        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(updatedFeeds));
+                             
+                        loadSavedFeeds(); /*reloaod the list */
+                        Swal.fire(
+                            'Deleted!!',
+                            'RSS url was deleted succsefully',
+                            'success'
+
+                        )
+                    }
+                }
+                )
+
+            });
+            // --- DELETE butonunu oluştur ve davranışını tanımla 
+
             li.appendChild(checkbox);
             li.appendChild(label);
+
+            // --- DELETE butonunu li içine ekle 
+            li.appendChild(deleteBtn);
+            // --- DELETE butonunu li içine ekle 
+
             savedFeedsList.appendChild(li);
 
-            // Sayfa ilk yüklendiğinde otomatik yükle
-            loadFeed(feedUrl);
+            loadFeed(feedUrl); // Sayfa ilk yüklendiğinde otomatik yükle
         });
+        
     }
 
-    function reloadEnabledFeeds() {
-        newsContainer.innerHTML = '';
-        const checkboxes = savedFeedsList.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const url = checkbox.nextSibling.textContent;
-                loadFeed(url);
-            }
-        });
-    }
+function reloadEnabledFeeds() {
+    newsContainer.innerHTML = '';
+    const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
+
+    const enabledFeeds = feeds.filter(feed => feed.check);
+    enabledFeeds.forEach(feed => {
+        loadFeed(feed.url);
+    });
+}
+
 
 
 });
