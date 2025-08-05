@@ -1,20 +1,31 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    /* ╔════════════════════════════════════════════╗
+       ║        C O N F I G   V A R I A B L E S     ║
+       ╚════════════════════════════════════════════╝ */
     const parserType = 'node'; // We can use 'php' if it needed
     const FEED_STORAGE_KEY = 'savedFeeds';
 
 
+    /* ╔═══════════════════════════════════════╗
+       ║           Define Elements             ║
+       ╚═══════════════════════════════════════╝ */
+
     const loadFeedBtn = document.getElementById('load-feed');
     const rssUrlInput = document.getElementById('rss-url');
     const newsContainer = document.getElementById('news-container');
-
-
     const feedForm = document.getElementById('rss-form');
     const newFeedInput = document.getElementById('new-rss-url');
-    const savedFeedsList = document.getElementById('saved-feeds-list');
+    const savedFeedsListContainer = document.getElementById('saved-feeds-list');
     const collapseButton = document.getElementById('rss-list-collapse-btn');
 
-    loadSavedFeeds(); //  WHEN PAGE LOADED THIS BRING OUR FEED AND CHECKBOX 
 
+    loadSavedFeeds();
+
+
+    /* ╔═══════════════════════════════════════╗
+       ║         Event Listener Function       ║
+       ╚═══════════════════════════════════════╝ */
 
     loadFeedBtn.addEventListener('click', function () {
         const url = rssUrlInput.value.trim();
@@ -36,27 +47,55 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     collapseButton.addEventListener('click', () => {
-        savedFeedsList.classList.toggle('collapsed');
+        savedFeedsListContainer.classList.toggle('collapsed');
 
         // Optional: update button label
-        collapseButton.textContent = savedFeedsList.classList.contains('collapsed')
+        collapseButton.textContent = savedFeedsListContainer.classList.contains('collapsed')
             ? 'Expand'
             : 'Collapse';
     });
 
 
-   function saveFeedUrl(url) {
-    const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
+    /*
+    ===============================
+    | Elements Creator Functions |
+    ===============================
+   */
 
-    // URL zaten kayıtlı mı kontrol et
-    const exists = feeds.some(feed => feed.url === url);
-    if (!exists) {
-        feeds.push({ url: url, check: true }); // Yeni eklenenler varsayılan olarak 'aktif'
-        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
+    function createFeedCheckbox(liID, feedObject) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        if (feedObject.check === true || feedObject.check === undefined) {
+            checkbox.checked = true;
+        }
+        checkbox.id = liID;
+        checkbox.value = feedObject.url;
+        return checkbox;
     }
-}
 
-    
+    function createDeleteButton() {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '🗑️';
+        deleteBtn.style.marginLeft = '10px';
+        deleteBtn.style.background = 'transparent';
+        deleteBtn.style.border = 'none';
+        deleteBtn.style.cursor = 'pointer';
+        deleteBtn.style.fontSize = '16px';
+        return deleteBtn;
+    }
+
+
+    // ═══◆◇◆ Helper Functions ◆◇◆═══
+
+    function saveFeedUrl(url) {
+        const feeds = getSavedFeeds();
+
+        const exists = feeds.some(feed => feed.url === url);
+        if (!exists) {
+            feeds.push({ url: url, check: true });
+            localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
+        }
+    }
 
     function loadFeed(feedUrl) {
         const phpURL = `https://abddomain.epizy.com/rss/rss_parsers/php_parser/index.php?url=${encodeURIComponent(feedUrl)}`;
@@ -117,96 +156,103 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadSavedFeeds() {
-        const feeds = localStorage.getItem(FEED_STORAGE_KEY) ? JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) : [];
-        savedFeedsList.innerHTML = '';
-        newsContainer.innerHTML = ''; // Önceki haberleri temizle
+        const feeds = getSavedFeeds();
+        savedFeedsListContainer.innerHTML = '';
+        newsContainer.innerHTML = '';
 
-        feeds.forEach(feedUrl => {
+        feeds.forEach(feedObject => {
             const liID = Math.floor(Math.random() * 100);
             const li = document.createElement('li');
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = true;
-            checkbox.id = liID;
-
-            checkbox.addEventListener('change', () => {
-                reloadEnabledFeeds(); // Checkbox durumu değiştiğinde sadece aktif olanları yükle
-            });
+            // Create checkbox and set its event listener
+            let checkbox = createFeedCheckbox(liID, feedObject);
+            setCheckBoxEvent(checkbox, feeds, feedObject);
 
 
             const label = document.createElement('label');
-            label.textContent = feedUrl;
+            label.textContent = feedObject.url;
             label.style.marginLeft = '8px';
             label.setAttribute("for", liID);
 
+            // Create delete button
+            let deleteBtn = createDeleteButton();
+            setDeleteBtnListener(deleteBtn, feeds, feedObject);
 
 
-
-
-            // --- DELETE butonunu oluştur ve davranışını tanımla (başlangıç) ---
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '🗑️';
-            deleteBtn.style.marginLeft = '10px';
-            deleteBtn.style.background = 'transparent';
-            deleteBtn.style.border = 'none';
-            deleteBtn.style.cursor = 'pointer';
-            deleteBtn.style.fontSize = '16px';
-
-            deleteBtn.addEventListener('click', () => {
-                Swal.fire({
-                    title: "Do you really want to delet this ?",
-                    text: "you are deleting this URL ",
-                    icon: "warning",
-                    showCancelButton: "true",
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes Please delete that",
-                    cancelButtonText: "Forget about that!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        /*if user confirmed we will delelte*/
-                        const updatedFeeds = feeds.filter(f => f !== feedUrl);
-                        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(updatedFeeds));
-                             
-                        loadSavedFeeds(); /*reloaod the list */
-                        Swal.fire(
-                            'Deleted!!',
-                            'RSS url was deleted succsefully',
-                            'success'
-
-                        )
-                    }
-                }
-                )
-
-            });
-            // --- DELETE butonunu oluştur ve davranışını tanımla 
-
+            // Append created elements to the list item
             li.appendChild(checkbox);
             li.appendChild(label);
-
-            // --- DELETE butonunu li içine ekle 
             li.appendChild(deleteBtn);
-            // --- DELETE butonunu li içine ekle 
 
-            savedFeedsList.appendChild(li);
 
-            loadFeed(feedUrl); // Sayfa ilk yüklendiğinde otomatik yükle
+            savedFeedsListContainer.appendChild(li);
+
+            // Load feed in if it's saved as true in local storage
+            if (feedObject.check === true) {
+                loadFeed(feedObject.url);
+            }
         });
-        
+
     }
 
-function reloadEnabledFeeds() {
-    newsContainer.innerHTML = '';
-    const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
+    function reloadEnabledFeeds() {
+        newsContainer.innerHTML = '';
+        const feeds = getSavedFeeds();
 
-    const enabledFeeds = feeds.filter(feed => feed.check);
-    enabledFeeds.forEach(feed => {
-        loadFeed(feed.url);
-    });
-}
+        const enabledFeeds = feeds.filter(feed => feed.check);
+        enabledFeeds.forEach(feed => {
+            loadFeed(feed.url);
+        });
+    }
 
+    function setDeleteBtnListener(deleteBtn, feeds, feedObject) {
+        deleteBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: "Do you really want to delet this ?",
+                text: "you are deleting this URL ",
+                icon: "warning",
+                showCancelButton: "true",
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes Please delete that",
+                cancelButtonText: "Forget about that!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    /*if user confirmed we will delelte*/
+                    const updatedFeeds = feeds.filter(feed => feed.url !== feedObject.url);
+                    localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(updatedFeeds));
+
+                    loadSavedFeeds(); /*reloaod the list */
+                    Swal.fire(
+                        'Deleted!!',
+                        'RSS url was deleted succsefully',
+                        'success'
+
+                    )
+                }
+            });
+
+        });
+    }
+
+    function setCheckBoxEvent(checkbox, feeds, feedObject) {
+        checkbox.addEventListener('change', () => {
+            feeds.map(feed => {
+                if (feed.url === feedObject.url) {
+                    feed.check = checkbox.checked;
+                }
+                return feed;
+            });
+            localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
+
+            reloadEnabledFeeds();
+        });
+    }
+
+    function getSavedFeeds() {
+        const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
+        return feeds;
+    }
 
 
 });
