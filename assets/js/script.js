@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const newFeedInput = document.getElementById('new-rss-url');
     const savedFeedsListContainer = document.getElementById('saved-feeds-list');
     const collapseButton = document.getElementById('rss-list-collapse-btn');
+    const feedNameInput = document.getElementById('rss-name');
+    const feedIconInput = document.getElementById('rss-icon');
+
 
 
     loadSavedFeeds();
@@ -39,11 +42,20 @@ document.addEventListener('DOMContentLoaded', function () {
     feedForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const newUrl = newFeedInput.value.trim();
-        if (newUrl) {
-            saveFeedUrl(newUrl);
+        const newName = feedNameInput.value.trim();
+        const newIcon = feedIconInput.value.trim();
+        console.log(`New Feed URL: ${newUrl}, Name: ${newName}, Icon: ${newIcon}`);
+
+        if (newUrl && newName && newIcon) {
+            saveFeedUrl(newUrl, newName, newIcon);
             newFeedInput.value = '';
+            feedNameInput.value = '';
+            feedIconInput.value = '';
             loadSavedFeeds();
+        } else {
+            alert('Please fill  all fields');
         }
+
     });
 
     collapseButton.addEventListener('click', () => {
@@ -62,16 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ===============================
    */
 
-    function createFeedCheckbox(liID, feedObject) {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        if (feedObject.check === true || feedObject.check === undefined) {
-            checkbox.checked = true;
-        }
-        checkbox.id = liID;
-        checkbox.value = feedObject.url;
-        return checkbox;
-    }
+
 
     function createDeleteButton() {
         const deleteBtn = document.createElement('button');
@@ -87,15 +90,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ═══◆◇◆ Helper Functions ◆◇◆═══
 
-    function saveFeedUrl(url) {
+    function saveFeedUrl(url, name, icon) {
         const feeds = getSavedFeeds();
+        console.log(`saving feed url: ${url}, name: ${name}, icon :${icon}`);
 
         const exists = feeds.some(feed => feed.url === url);
+        console.log(`Feed URL exists: ${exists}`);
+
         if (!exists) {
-            feeds.push({ url: url, check: true });
+            feeds.push({ url: url, name, icon, check: true });
             localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
+        } else {
+            Swal.fire({
+                title: "Feed URL already exists",
+                text: "This URL is already saved in your list.",
+                icon: "info",
+                confirmButtonText: "OK"
+            });
         }
-    }
+    } consol
+
 
     function loadFeed(feedUrl) {
         const phpURL = `https://abddomain.epizy.com/rss/rss_parsers/php_parser/index.php?url=${encodeURIComponent(feedUrl)}`;
@@ -150,51 +164,61 @@ document.addEventListener('DOMContentLoaded', function () {
           <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read more</a>
         </div>
       `;
-
+console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
             newsContainer.appendChild(card);
         });
     }
-
     function loadSavedFeeds() {
         const feeds = getSavedFeeds();
         savedFeedsListContainer.innerHTML = '';
         newsContainer.innerHTML = '';
 
-        feeds.forEach(feedObject => {
-            const liID = Math.floor(Math.random() * 100);
+        feeds.forEach((feedObject, index) => {
             const li = document.createElement('li');
+            li.className = 'feed-item';
+            if (feedObject.check) li.classList.add('active-feed');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = "checkbox-" + index;
 
-            // Create checkbox and set its event listener
-            let checkbox = createFeedCheckbox(liID, feedObject);
-            setCheckBoxEvent(checkbox, feeds, feedObject);
-
-
-            const label = document.createElement('label');
-            label.textContent = feedObject.url;
-            label.style.marginLeft = '8px';
-            label.setAttribute("for", liID);
-
-            // Create delete button
+            checkbox.checked = feedObject.check;
+            checkbox.className = 'feed-checkbox';
+            checkbox.addEventListener('change', () => {
+                handleCheckboxChange(checkbox, feeds,feedObject)
+            });
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'feed-toggle';
+            btn.innerHTML = `<i class="${feedObject.icon || ''}" style="margin-right:6px;"></i>${feedObject.name || feedObject.url}`;
+            
+            btn.addEventListener('click', () => {
+                feeds.forEach(f => {
+                    if (f.url === feedObject.url) f.check = !f.check;
+                });
+                localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
+                loadSavedFeeds();
+                reloadEnabledFeeds();
+            });
+            
             let deleteBtn = createDeleteButton();
             setDeleteBtnListener(deleteBtn, feeds, feedObject);
+        
+            console.log(`Feed URL: ${feedObject.url}, Name: ${feedObject.name}, Icon: ${feedObject.icon}`); 
+            const label = document.createElement('label');
+            label.htmlFor = "checkbox-" + index;
+            label.className = 'feed-label';
+            //label.textContent = feedObject.name || feedObject.url;
+            label.appendChild(checkbox);
+            label.appendChild(btn);
+            label.appendChild(deleteBtn);
 
-
-            // Append created elements to the list item
-            li.appendChild(checkbox);
             li.appendChild(label);
-            li.appendChild(deleteBtn);
-
-
             savedFeedsListContainer.appendChild(li);
-
-            // Load feed in if it's saved as true in local storage
-            if (feedObject.check === true) {
-                loadFeed(feedObject.url);
-            }
         });
 
+        reloadEnabledFeeds();
     }
-
+// Reload enabled feeds when the saved feeds list is loaded
     function reloadEnabledFeeds() {
         newsContainer.innerHTML = '';
         const feeds = getSavedFeeds();
@@ -204,6 +228,10 @@ document.addEventListener('DOMContentLoaded', function () {
             loadFeed(feed.url);
         });
     }
+    
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     // Set event listener for delete button
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
     function setDeleteBtnListener(deleteBtn, feeds, feedObject) {
         deleteBtn.addEventListener('click', () => {
@@ -237,18 +265,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setCheckBoxEvent(checkbox, feeds, feedObject) {
         checkbox.addEventListener('change', () => {
-            feeds.map(feed => {
-                if (feed.url === feedObject.url) {
-                    feed.check = checkbox.checked;
-                }
-                return feed;
-            });
-            localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
-
-            reloadEnabledFeeds();
+            handleCheckboxChange(checkbox, feeds,feedObject);
         });
     }
+    function handleCheckboxChange(checkbox, feeds,feedObject) {
+        feeds.map(feed => {
+            if (feed.url === feedObject.url) {
+                feed.check = checkbox.checked;
+            }
+            return feed;
+        });
+        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feeds));
 
+        reloadEnabledFeeds();
+
+    }
     function getSavedFeeds() {
         const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
         return feeds;
@@ -257,4 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-
+// ════════════════════════════════════════════════
+// ║               End of the Script               ║    
+// ╚═══════════════════════════════════════════════
+// This script is designed to handle RSS feed loading, saving, and displaying.

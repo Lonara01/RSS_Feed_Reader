@@ -12,7 +12,13 @@ body {
     background-color: variables.$secondary-color;
     line-height: 1.6;
     padding: 20px;
+
+    // Mevcut stilleriniz
+    @media (max-width: $breakpoint-medium ) {
+        padding: 0.5rem;
+    }
 }
+
 
 .header {
     text-align: center;
@@ -22,9 +28,15 @@ body {
     border-radius: 8px;
     box-shadow: variables.$card-shadow;
 
+    @media (max-width: $breakpoint-medium) {
+        padding: $base-spacing * 0.5;
+
+    }
+
     h1 {
         color: variables.$light-gray;
         margin-bottom: 1rem;
+        font-size: 1.5rem;
     }
 }
 
@@ -37,11 +49,20 @@ body {
     max-width: 90%;
     margin: 1rem auto;
 
+    // Mobil düzen
+    @media (max-width: $breakpoint-medium) {
+        width: 95%;
+        padding: 0.5rem;
+
+
+    }
+
     .rss-list-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
+        flex-direction: column;
 
         #rss-list-collapse-btn {
             padding: 0.5rem 1rem;
@@ -58,24 +79,65 @@ body {
         }
     }
 
+    h4 {
+        margin-bottom: 0.75rem;
+        font-size: 1.2rem;
+        color: variables.$light-gray;
+        text-align: center;
+    }
 }
 
-#rss-list h4 {
-    margin-bottom: 0.75rem;
-    font-size: 1.2rem;
-    color: variables.$light-gray;
-    text-align: center;
-}
 
 #saved-feeds-list {
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
+    padding: 8px 0 0 0;
     margin: 0;
     display: flex;
+    gap: 8px;
     flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    overflow: hidden;
+
+    @media (max-width: $breakpoint-small) {
+        flex-direction: column;
+    }
+}
+
+#saved-feeds-list li.feed-item {
+    border-radius: 8px;
+    padding: 0px;
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+}
+
+label {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+}
+
+
+.feed-toggle {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feed-toggle i {
+    font-size: 16px;
+}
+
+.feed-item .delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 #saved-feeds-list.collapsed {
@@ -85,12 +147,13 @@ body {
 #saved-feeds-list li {
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.5rem;
-    background-color: variables.$secondary-color;
+    //background-color: variables.$secondary-color;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
+
 }
 
 .feed-controls {
@@ -98,6 +161,16 @@ body {
     justify-content: center;
     gap: 10px;
     margin-top: 1rem;
+
+    @media (max-width: $breakpoint-small) {
+        flex-direction: column;
+        align-items: center;
+
+        input {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
 
     input {
         padding: 0.5rem 1rem;
@@ -133,30 +206,42 @@ body {
 }
 
 #rss-form {
-    width: 600px;
+    width: 100%; // Sabit genişlik yerine yüzde
+    max-width: 600px; // Maksimum genişlik belirle
     display: flex;
+    flex-direction: column; // Mobilde sütun düzeni
     gap: 0.5rem;
-    margin: 0px auto;
+    margin: 0 auto;
+    padding: 0 1rem; // Kenar boşlukları
+    background-color: variables.$primary-color;
 
+    // Tablet/desktop
+    @media (min-width: $breakpoint-small) {
+        flex-direction: row;
+    }
 }
 
-#new-rss-url {
+#new-rss-url,
+.form-control {
     flex: 1;
     padding: 0.5rem 0.75rem;
     font-size: 1rem;
+    width: 100%;
     border: 1px solid #b3d6ff;
     border-radius: 6px;
     outline: none;
     transition: border-color 0.2s;
 }
 
-#new-rss-url:focus {
+#new-rss-url:focus,
+.form-control:focus {
     border-color: #03485f;
     /* Matches your header color */
 }
 
 #rss-form button {
     padding: 0.5rem 1rem;
+    width: 100%;
     background-color: variables.$secondary-color;
     color: white;
     border: none;
@@ -175,6 +260,16 @@ body {
     gap: 20px;
     padding: 20px 0;
 
+    @media (max-width: $breakpoint-small) {
+        gap: $base-spacing;
+
+        .news-card .news-image {
+            height: 120px; // Daha küçük ekranlar için
+        }
+    }
+
+
+
     .news-card {
         background-color: white;
         border-radius: 1px;
@@ -189,7 +284,7 @@ body {
 
         .news-image {
             width: 100%;
-            height: 180px;
+            height: 150px;
             object-fit: cover;
             border-radius: 2%;
         }
@@ -240,5 +335,18 @@ body {
 @media (max-width: 768px) {
     .news-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+.feed-checkbox {
+    display: none;
+}
+
+li {
+    background-color: #015470;
+    ;
+
+    &:has(input[type="checkbox"]:checked) {
+        background-color: rgb(42, 173, 225) !important;
     }
 }

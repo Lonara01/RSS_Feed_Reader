@@ -14,7 +14,10 @@
     <meta name="apple-mobile-web-app-title" content="RSS " />
     <link rel="manifest" href="dist/favicon/site.webmanifest" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -30,14 +33,21 @@
     <!-- 🔻 NEW: Feed manager section -->
     <section class="rss-manager">
         <form id="rss-form">
-            <input type="url" id="new-rss-url" placeholder="Add new RSS feed URL" required />
-            <button type="submit">Add Feed</button>
+
+            <input type="text" id="rss-name" class="form-control" placeholder="Feed name" required />
+            <input type="text" id="rss-icon" class="form-control"
+                placeholder="Font Awesome icon class (e.g. fa-solid fa-newspaper)" required />
+
+            <input type="url" id="new-rss-url" class="form-control" placeholder="Add new RSS feed URL" required />
+            <button type="submit">Add Feed <i class="fa-solid fa-arrow-down-long"></i></button>
         </form>
 
         <div id="rss-list">
+
             <div class="rss-list-header">
                 <h4>Saved Feeds</h4>
                 <button id="rss-list-collapse-btn">Collapse</button>
+
             </div>
 
             <ul id="saved-feeds-list">
