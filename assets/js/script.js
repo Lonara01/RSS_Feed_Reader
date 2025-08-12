@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', function () {
         savedFeedsListContainer.classList.toggle('collapsed');
 
         // Optional: update button label
-        collapseButton.textContent = savedFeedsListContainer.classList.contains('collapsed')
-            ? 'Expand'
-            : 'Collapse';
+        collapseButton.innerHTML = savedFeedsListContainer.classList.contains('collapsed')
+            ? '<i class="fas fa-plus"></i>'
+            : '<i class="fas fa-minus"></i>';
     });
 
 
@@ -78,9 +78,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function createDeleteButton() {
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '🗑️';
-        deleteBtn.style.marginLeft = '10px';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.style.marginRight = '10px';
         deleteBtn.style.background = 'transparent';
+        deleteBtn.style.color = '#fff';
         deleteBtn.style.border = 'none';
         deleteBtn.style.cursor = 'pointer';
         deleteBtn.style.fontSize = '16px';

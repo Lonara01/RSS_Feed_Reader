@@ -13,12 +13,10 @@ body {
     line-height: 1.6;
     padding: 20px;
 
-    // Mevcut stilleriniz
-    @media (max-width: $breakpoint-medium ) {
+    @media (max-width: variables.$breakpoint-medium) {
         padding: 0.5rem;
     }
 }
-
 
 .header {
     text-align: center;
@@ -28,9 +26,8 @@ body {
     border-radius: 8px;
     box-shadow: variables.$card-shadow;
 
-    @media (max-width: $breakpoint-medium) {
-        padding: $base-spacing * 0.5;
-
+    @media (max-width: variables.$breakpoint-medium) {
+        padding: variables.$base-spacing * 0.5;
     }
 
     h1 {
@@ -49,12 +46,9 @@ body {
     max-width: 90%;
     margin: 1rem auto;
 
-    // Mobil düzen
-    @media (max-width: $breakpoint-medium) {
+    @media (max-width: variables.$breakpoint-medium) {
         width: 95%;
         padding: 0.5rem;
-
-
     }
 
     .rss-list-header {
@@ -62,7 +56,7 @@ body {
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
-        flex-direction: column;
+        flex-direction: row;
 
         #rss-list-collapse-btn {
             padding: 0.5rem 1rem;
@@ -87,36 +81,81 @@ body {
     }
 }
 
-
 #saved-feeds-list {
     list-style: none;
-    padding: 8px 0 0 0;
+    padding: 20px;
     margin: 0;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    overflow: hidden;
 
-    @media (max-width: $breakpoint-small) {
+    @media (max-width: variables.$breakpoint-small) {
         flex-direction: column;
+    }
+
+    &.collapsed {
+        max-height: 0;
+    }
+
+    li {
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &.feed-item {
+            border-radius: 8px;
+            padding: 0px;
+            justify-content: space-between;
+            display: flex;
+            background-color: #015470;
+            position: relative;
+
+            &.active-feed {
+                background-color: rgb(42, 173, 225);
+                box-shadow: rgba(0, 0, 0, 0.25) 0px 12px 24px, rgba(0, 0, 0, 0.22) 0px 10px 10px !important;
+
+                // &:before {
+                //     content: "\f005";
+                //     font-family: "Font Awesome 6 Free";
+                //     position: absolute;
+                //     top: -15px;
+                //     left: -7px;
+                //     font-size: 12px;
+                //     color: #023e8a;
+                // }
+            }
+
+            .feed-toggle {
+                color: #fff;
+                font-size: 15px;
+                font-weight: 500;
+            }
+
+            .feed-label {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .delete-btn {
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+            }
+        }
     }
 }
 
-#saved-feeds-list li.feed-item {
-    border-radius: 8px;
-    padding: 0px;
-    width: 100%;
-    justify-content: space-between;
-    display: flex;
-}
-
 label {
-
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 6px;
 }
-
 
 .feed-toggle {
     background: transparent;
@@ -127,33 +166,10 @@ label {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
 
-.feed-toggle i {
-    font-size: 16px;
-}
-
-.feed-item .delete-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#saved-feeds-list.collapsed {
-    max-height: 0;
-}
-
-#saved-feeds-list li {
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 0.5rem;
-    //background-color: variables.$secondary-color;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
+    i {
+        font-size: 16px;
+    }
 }
 
 .feed-controls {
@@ -162,7 +178,7 @@ label {
     gap: 10px;
     margin-top: 1rem;
 
-    @media (max-width: $breakpoint-small) {
+    @media (max-width: variables.$breakpoint-small) {
         flex-direction: column;
         align-items: center;
 
@@ -206,52 +222,48 @@ label {
 }
 
 #rss-form {
-    width: 100%; // Sabit genişlik yerine yüzde
-    max-width: 600px; // Maksimum genişlik belirle
+    width: 90%;
     display: flex;
-    flex-direction: column; // Mobilde sütun düzeni
+    flex-direction: row;
     gap: 0.5rem;
     margin: 0 auto;
-    padding: 0 1rem; // Kenar boşlukları
+    padding: 1rem 1rem;
     background-color: variables.$primary-color;
+    border-radius: 8px;
 
-    // Tablet/desktop
-    @media (min-width: $breakpoint-small) {
-        flex-direction: row;
+    @media (max-width: variables.$breakpoint-small) {
+        flex-direction: column;
     }
-}
 
-#new-rss-url,
-.form-control {
-    flex: 1;
-    padding: 0.5rem 0.75rem;
-    font-size: 1rem;
-    width: 100%;
-    border: 1px solid #b3d6ff;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.2s;
-}
+    #new-rss-url,
+    .form-control {
+        flex: 1;
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        width: 100%;
+        border: 1px solid #b3d6ff;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.2s;
 
-#new-rss-url:focus,
-.form-control:focus {
-    border-color: #03485f;
-    /* Matches your header color */
-}
+        &:focus {
+            border-color: #03485f;
+        }
+    }
 
-#rss-form button {
-    padding: 0.5rem 1rem;
-    width: 100%;
-    background-color: variables.$secondary-color;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.4s;
-}
+    button {
+        padding: 0.5rem 1rem;
+        background-color: variables.$secondary-color;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.4s;
 
-#rss-form button:hover {
-    background-color: #1b7d95;
+        &:hover {
+            background-color: #1b7d95;
+        }
+    }
 }
 
 .news-grid {
@@ -260,19 +272,18 @@ label {
     gap: 20px;
     padding: 20px 0;
 
-    @media (max-width: $breakpoint-small) {
-        gap: $base-spacing;
+    @media (max-width: variables.$breakpoint-small) {
+        gap: variables.$base-spacing;
 
-        .news-card .news-image {
-            height: 120px; // Daha küçük ekranlar için
+        .news-card {
+            .news-image {
+                height: 120px;
+            }
         }
     }
 
-
-
     .news-card {
         background-color: white;
-        border-radius: 1px;
         overflow: hidden;
         box-shadow: variables.$card-shadow;
         transition: transform 0.5s;
@@ -295,7 +306,7 @@ label {
             .news-title {
                 font-size: 1.2rem;
                 margin-bottom: 0.5rem;
-                color: variables.$primary-color;
+                color: variables.$light-gray;
             }
 
             .news-description {
@@ -323,7 +334,6 @@ label {
     }
 }
 
-// Loading state
 .loading {
     text-align: center;
     padding: 2rem;
@@ -331,7 +341,6 @@ label {
     color: #666;
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
     .news-grid {
         grid-template-columns: 1fr;
@@ -342,11 +351,4 @@ label {
     display: none;
 }
 
-li {
-    background-color: #015470;
-    ;
-
-    &:has(input[type="checkbox"]:checked) {
-        background-color: rgb(42, 173, 225) !important;
-    }
-}
+li {}

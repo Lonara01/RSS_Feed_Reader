@@ -10,6 +10,11 @@ body {
   line-height: 1.6;
   padding: 20px;
 }
+@media (max-width: 768px) {
+  body {
+    padding: 0.5rem;
+  }
+}
 
 .header {
   text-align: center;
@@ -19,9 +24,15 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+@media (max-width: 768px) {
+  .header {
+    padding: 0.5rem;
+  }
+}
 .header h1 {
-  color: #0D00A4;
+  color: #023e8a;
   margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 #rss-list {
@@ -33,11 +44,18 @@ body {
   max-width: 90%;
   margin: 1rem auto;
 }
+@media (max-width: 768px) {
+  #rss-list {
+    width: 95%;
+    padding: 0.5rem;
+  }
+}
 #rss-list .rss-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-direction: row;
 }
 #rss-list .rss-list-header #rss-list-collapse-btn {
   padding: 0.5rem 1rem;
@@ -54,24 +72,64 @@ body {
 #rss-list h4 {
   margin-bottom: 0.75rem;
   font-size: 1.2rem;
-  color: #0D00A4;
+  color: #023e8a;
   text-align: center;
 }
 
 #saved-feeds-list {
   list-style: none;
-  padding: 8px 0 0 0;
+  padding: 20px;
   margin: 0;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  overflow: hidden;
 }
-
+@media (max-width: 480px) {
+  #saved-feeds-list {
+    flex-direction: column;
+  }
+}
+#saved-feeds-list.collapsed {
+  max-height: 0;
+}
+#saved-feeds-list li {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 #saved-feeds-list li.feed-item {
   border-radius: 8px;
   padding: 0px;
+  justify-content: space-between;
+  display: flex;
+  background-color: #015470;
+  position: relative;
 }
-#saved-feeds-list li.feed-item label {
+#saved-feeds-list li.feed-item.active-feed {
+  background-color: rgb(42, 173, 225);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 12px 24px, rgba(0, 0, 0, 0.22) 0px 10px 10px !important;
+}
+#saved-feeds-list li.feed-item .feed-toggle {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+}
+#saved-feeds-list li.feed-item .feed-label {
+  justify-content: space-between;
+  width: 100%;
+}
+#saved-feeds-list li.feed-item .delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -88,30 +146,8 @@ body {
   align-items: center;
   gap: 8px;
 }
-
 .feed-toggle i {
   font-size: 16px;
-}
-
-.feed-item .delete-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-#saved-feeds-list.collapsed {
-  max-height: 0;
-}
-
-#saved-feeds-list li {
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .feed-controls {
@@ -119,6 +155,16 @@ body {
   justify-content: center;
   gap: 10px;
   margin-top: 1rem;
+}
+@media (max-width: 480px) {
+  .feed-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  .feed-controls input {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 .feed-controls input {
   padding: 0.5rem 1rem;
@@ -151,22 +197,22 @@ body {
 }
 
 #rss-form {
-  width: 100%;
-  max-width: 600px;
+  width: 90%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
+  background-color: #90e0ef;
+  border-radius: 8px;
 }
-@media (min-width: 768px) {
+@media (max-width: 480px) {
   #rss-form {
-    flex-direction: row;
+    flex-direction: column;
   }
 }
-
-#new-rss-url,
-.form-control {
+#rss-form #new-rss-url,
+#rss-form .form-control {
   flex: 1;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
@@ -176,13 +222,10 @@ body {
   outline: none;
   transition: border-color 0.2s;
 }
-
-#new-rss-url:focus,
-.form-control:focus {
+#rss-form #new-rss-url:focus,
+#rss-form .form-control:focus {
   border-color: #03485f;
-  /* Matches your header color */
 }
-
 #rss-form button {
   padding: 0.5rem 1rem;
   background-color: #0096c7;
@@ -192,7 +235,6 @@ body {
   cursor: pointer;
   transition: background-color 0.4s;
 }
-
 #rss-form button:hover {
   background-color: #1b7d95;
 }
@@ -203,9 +245,16 @@ body {
   gap: 20px;
   padding: 20px 0;
 }
+@media (max-width: 480px) {
+  .news-grid {
+    gap: 1rem;
+  }
+  .news-grid .news-card .news-image {
+    height: 120px;
+  }
+}
 .news-grid .news-card {
   background-color: white;
-  border-radius: 1px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.5s;
@@ -216,7 +265,7 @@ body {
 }
 .news-grid .news-card .news-image {
   width: 100%;
-  height: 180px;
+  height: 150px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 2%;
@@ -227,7 +276,7 @@ body {
 .news-grid .news-card .news-content .news-title {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #90e0ef;
+  color: #023e8a;
 }
 .news-grid .news-card .news-content .news-description {
   color: #666;
@@ -262,12 +311,5 @@ body {
 }
 .feed-checkbox {
   display: none;
-}
-
-li {
-  background-color: #f5f5f8;
-}
-li:has(input[type=checkbox]:checked) {
-  background-color: rgb(8, 21, 255) !important;
 }
 /*# sourceMappingURL=map/main.min.css.map */
