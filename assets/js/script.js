@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const feedNameInput = document.getElementById('rss-name');
     const feedIconInput = document.getElementById('rss-icon');
 
+    // Pagination değişkenleri
+    let currentPage = 1;
+    const itemsPerPage = 9;
+    let allNews = [];
+
+
 
 
     loadSavedFeeds();
@@ -109,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: "OK"
             });
         }
-    } consol
+    }
 
 
     function loadFeed(feedUrl) {
@@ -130,49 +136,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function displayNews(items) {
-        if (!items || items.length === 0) {
-            newsContainer.innerHTML += '<div class="loading">No news items found in the feed</div>';
-            return;
-        }
 
-        items.forEach(item => {
-            const card = document.createElement('article');
-            card.className = 'news-card';
-
-            const cleanDescription = item.description
-                ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
-                : 'No description available';
-
-            const pubDate = item.pubDate
-                ? new Date(item.pubDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                })
-                : 'Unknown date';
-
-            const image = item.imageUrl
-                ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
-                : `<div class="news-image" style="background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">No Image</div>`;
-
-            card.innerHTML = `
-        ${image}
-        <div class="news-content">
-          <h3 class="news-title">${item.title || 'No title'}</h3>
-          <p class="news-description">${cleanDescription}</p>
-          <p class="news-date"><strong>Published:</strong> ${pubDate}</p>
-          <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read more</a>
-        </div>
-      `;
-console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
-            newsContainer.appendChild(card);
-        });
-    }
     function loadSavedFeeds() {
         const feeds = getSavedFeeds();
         savedFeedsListContainer.innerHTML = '';
         newsContainer.innerHTML = '';
+        allNews = [];
 
         feeds.forEach((feedObject, index) => {
             const li = document.createElement('li');
@@ -185,13 +154,13 @@ console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
             checkbox.checked = feedObject.check;
             checkbox.className = 'feed-checkbox';
             checkbox.addEventListener('change', () => {
-                handleCheckboxChange(checkbox, feeds,feedObject)
+                handleCheckboxChange(checkbox, feeds, feedObject)
             });
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'feed-toggle';
             btn.innerHTML = `<i class="${feedObject.icon || ''}" style="margin-right:6px;"></i>${feedObject.name || feedObject.url}`;
-            
+
             btn.addEventListener('click', () => {
                 feeds.forEach(f => {
                     if (f.url === feedObject.url) f.check = !f.check;
@@ -200,11 +169,11 @@ console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
                 loadSavedFeeds();
                 reloadEnabledFeeds();
             });
-            
+
             let deleteBtn = createDeleteButton();
             setDeleteBtnListener(deleteBtn, feeds, feedObject);
-        
-            console.log(`Feed URL: ${feedObject.url}, Name: ${feedObject.name}, Icon: ${feedObject.icon}`); 
+
+
             const label = document.createElement('label');
             label.htmlFor = "checkbox-" + index;
             label.className = 'feed-label';
@@ -219,20 +188,20 @@ console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
 
         reloadEnabledFeeds();
     }
-// Reload enabled feeds when the saved feeds list is loaded
+    // Reload enabled feeds when the saved feeds list is loaded
     function reloadEnabledFeeds() {
         newsContainer.innerHTML = '';
+        allNews = []; // REST TO AVOİD THE DUPLICATION
         const feeds = getSavedFeeds();
-
         const enabledFeeds = feeds.filter(feed => feed.check);
         enabledFeeds.forEach(feed => {
             loadFeed(feed.url);
         });
     }
-    
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     // Set event listener for delete button
-   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         // Set event listener for delete button
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
     function setDeleteBtnListener(deleteBtn, feeds, feedObject) {
         deleteBtn.addEventListener('click', () => {
@@ -266,10 +235,10 @@ console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
 
     function setCheckBoxEvent(checkbox, feeds, feedObject) {
         checkbox.addEventListener('change', () => {
-            handleCheckboxChange(checkbox, feeds,feedObject);
+            handleCheckboxChange(checkbox, feeds, feedObject);
         });
     }
-    function handleCheckboxChange(checkbox, feeds,feedObject) {
+    function handleCheckboxChange(checkbox, feeds, feedObject) {
         feeds.map(feed => {
             if (feed.url === feedObject.url) {
                 feed.check = checkbox.checked;
@@ -287,9 +256,108 @@ console.log(`News Item: ${item.title}, Link: ${item.link}, Date: ${pubDate}`);
     }
 
 
+
+/* ╔═══════════════════════════════════════╗
+   ║        Pagination Variables           ║
+   ╚═══════════════════════════════════════╝ */
+
+function displayNews(items) {
+    if (!items || items.length === 0) {
+        newsContainer.innerHTML += '<div class="loading">No news items found in feed</div>';
+        return;
+    }
+    allNews = allNews.concat(items);
+    renderPage(currentPage);
+    renderPagination();
+}
+function renderPage(page) {
+    newsContainer.innerHTML = '';
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageItems = allNews.slice(start, end);
+
+
+    pageItems.forEach(item => {
+        const card = document.createElement('article');
+        card.className = 'news-card';
+
+        const cleanDescription = item.description
+            ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
+            : 'No Description available';
+        const pubDate = item.pubDate
+            ? new Date(item.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            })
+            : 'Unknown date';
+        const image = item.imageUrl
+            ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-title" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
+            : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
+        card.innerHTML = `
+    ${image}
+    <div class="news-content">
+        <h3 class="news-title">${item.title || 'No title'}</h3>
+        <p class="news-description">${cleanDescription}</p>
+        <p class="news-date">${pubDate}</p>
+        <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read More</a>
+    </div>
+`;
+        newsContainer.appendChild(card);
+    });
+}
+function renderPagination() {
+      pagination.innerHTML = '';
+        const totalPages = Math.ceil(allNews.length / itemsPerPage);
+
+
+    /* ~~~~~~~~~~~~~~~~~ previous button ~~~~~~~~~~~~~~~~~ */
+    const prevLi = document.createElement('li');
+    prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+    prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+    prevLi.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+            renderPagination();
+
+        }
+
+    });
+    pagination.appendChild(prevLi);
+
+    //page numbers
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = 'page-item' + (i === currentPage ? ' active' : '');
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        li.addEventListener('click', () => {
+            currentPage = i;
+            renderPage(currentPage);
+            renderPagination();
+        });
+        pagination.appendChild(li);
+
+    }
+    //next 
+    const nextLi = document.createElement('li');
+    nextLi.className = 'page-item' + (currentPage === totalPages ? 'disabled' : '');
+    nextLi.innerHTML = `<a class ="page-link" href= "#">&raquo;</a>`;
+    nextLi.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage(currentPage);
+            renderPagination();
+
+        }
+    });
+    pagination.appendChild(nextLi);
+
+}
 });
 
 // ════════════════════════════════════════════════
-// ║               End of the Script               ║    
+// ║               End of the Script               ║
 // ╚═══════════════════════════════════════════════
 // This script is designed to handle RSS feed loading, saving, and displaying.

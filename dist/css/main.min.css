@@ -312,4 +312,45 @@ label {
 .feed-checkbox {
   display: none;
 }
+
+/* ~~~~~~~~~~~~~~~~~ Pagination Styles ~~~~~~~~~~~~~~~~~ */
+.pagination-container {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+.pagination-container .pagination {
+  display: flex;
+  list-style: none;
+  gap: 0.5rem;
+  padding: 0;
+}
+.pagination-container .pagination .page-item .page-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #023e8a;
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.pagination-container .pagination .page-item .page-link:hover {
+  background-color: #0096c7;
+  transform: translateY(-3px);
+}
+.pagination-container .pagination .page-item.active .page-link {
+  background-color: #90e0ef;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.pagination-container .pagination .page-item.disabled .page-link {
+  background-color: #ccc;
+  color: #666;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ~~~~~~~~~~~~~~~~~ End of Pagination Styles ~~~~~~~~~~~~~~~~~ */
 /*# sourceMappingURL=map/main.min.css.map */
