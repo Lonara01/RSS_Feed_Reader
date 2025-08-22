@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
        ╚════════════════════════════════════════════╝ */
     const parserType = 'node'; // We can use 'php' if it needed
     const FEED_STORAGE_KEY = 'savedFeeds';
+    const FEED_PER_PAGE = 10;
 
 
     /* ╔═══════════════════════════════════════╗
@@ -20,13 +21,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const collapseButton = document.getElementById('rss-list-collapse-btn');
     const feedNameInput = document.getElementById('rss-name');
     const feedIconInput = document.getElementById('rss-icon');
+    const cardPerPageSelect = document.getElementById("cards-per-page");
 
     // Pagination değişkenleri
     let currentPage = 1;
-    const itemsPerPage = 9;
-    let allNews = [];
+    var itemsPerPage = JSON.parse(localStorage.getItem(FEED_PER_PAGE)) || 10;
+    var allNews = [];
 
 
+
+
+
+    if (cardPerPageSelect) {
+        cardPerPageSelect.value = itemsPerPage;
+        cardPerPageSelect.addEventListener("change", function () {
+            // currentPage = 1; // Reset to first page on change
+            itemsPerPage = this.value || 10; // Update items per page
+            displayNews(allNews);
+            localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
+        });
+    }
 
 
     loadSavedFeeds();
@@ -257,44 +271,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-/* ╔═══════════════════════════════════════╗
-   ║        Pagination Variables           ║
-   ╚═══════════════════════════════════════╝ */
+    /* ╔═══════════════════════════════════════╗
+       ║        Pagination Variables           ║
+       ╚═══════════════════════════════════════╝ */
 
-function displayNews(items) {
-    if (!items || items.length === 0) {
-        newsContainer.innerHTML += '<div class="loading">No news items found in feed</div>';
-        return;
+    function displayNews(items) {
+        if (!items || items.length === 0) {
+            newsContainer.innerHTML += '<div class="loading">No news items found in feed</div>';
+            return;
+        }
+        allNews = allNews.concat(items);
+        renderPage(currentPage);
+        renderPagination();
     }
-    allNews = allNews.concat(items);
-    renderPage(currentPage);
-    renderPagination();
-}
-function renderPage(page) {
-    newsContainer.innerHTML = '';
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const pageItems = allNews.slice(start, end);
+    function renderPage(page) {
+        newsContainer.innerHTML = '';
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = allNews.slice(start, end);
 
 
-    pageItems.forEach(item => {
-        const card = document.createElement('article');
-        card.className = 'news-card';
+        pageItems.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'news-card';
 
-        const cleanDescription = item.description
-            ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
-            : 'No Description available';
-        const pubDate = item.pubDate
-            ? new Date(item.pubDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            })
-            : 'Unknown date';
-        const image = item.imageUrl
-            ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-title" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
-            : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
-        card.innerHTML = `
+            const cleanDescription = item.description
+                ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
+                : 'No Description available';
+            const pubDate = item.pubDate
+                ? new Date(item.pubDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                })
+                : 'Unknown date';
+            const image = item.imageUrl
+                ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
+                : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
+            card.innerHTML = `
     ${image}
     <div class="news-content">
         <h3 class="news-title">${item.title || 'No title'}</h3>
@@ -303,58 +317,61 @@ function renderPage(page) {
         <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read More</a>
     </div>
 `;
-        newsContainer.appendChild(card);
-    });
-}
-function renderPagination() {
-      pagination.innerHTML = '';
+            newsContainer.appendChild(card);
+        });
+    }
+    function renderPagination() {
+        pagination.innerHTML = '';
         const totalPages = Math.ceil(allNews.length / itemsPerPage);
 
 
-    /* ~~~~~~~~~~~~~~~~~ previous button ~~~~~~~~~~~~~~~~~ */
-    const prevLi = document.createElement('li');
-    prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
-    prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
-    prevLi.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderPage(currentPage);
-            renderPagination();
+        /* ~~~~~~~~~~~~~~~~~ previous button ~~~~~~~~~~~~~~~~~ */
+        const prevLi = document.createElement('li');
+        prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+        prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+        prevLi.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+                renderPagination();
+
+            }
+
+        });
+        pagination.appendChild(prevLi);
+
+        //page numbers
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (i === currentPage ? ' active' : '');
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener('click', () => {
+                currentPage = i;
+                renderPage(currentPage);
+                renderPagination();
+            });
+            pagination.appendChild(li);
 
         }
+        //next 
+        const nextLi = document.createElement('li');
+        nextLi.className = 'page-item' + (currentPage === totalPages ? 'disabled' : '');
+        nextLi.innerHTML = `<a class ="page-link" href= "#">&raquo;</a>`;
+        nextLi.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+                renderPagination();
 
-    });
-    pagination.appendChild(prevLi);
-
-    //page numbers
-
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li');
-        li.className = 'page-item' + (i === currentPage ? ' active' : '');
-        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-        li.addEventListener('click', () => {
-            currentPage = i;
-            renderPage(currentPage);
-            renderPagination();
+            }
         });
-        pagination.appendChild(li);
+        pagination.appendChild(nextLi);
 
     }
-    //next 
-    const nextLi = document.createElement('li');
-    nextLi.className = 'page-item' + (currentPage === totalPages ? 'disabled' : '');
-    nextLi.innerHTML = `<a class ="page-link" href= "#">&raquo;</a>`;
-    nextLi.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderPage(currentPage);
-            renderPagination();
 
-        }
-    });
-    pagination.appendChild(nextLi);
 
-}
+
 });
 
 // ════════════════════════════════════════════════

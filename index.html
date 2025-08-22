@@ -7,19 +7,24 @@
     <title>RSS Feed News</title>
     <link rel="stylesheet" href="dist/css/main.min.css" />
 
+    <!-- Load FavIcon -->
     <link rel="icon" type="image/png" href="dist/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="dist/favicon/favicon.svg" />
     <link rel="shortcut icon" href="dist/favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="dist/favicon/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="RSS " />
     <link rel="manifest" href="dist/favicon/site.webmanifest" />
+
+    <!-- Load SweetAlert2 from CDN for better alert messages  -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Load FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
- 
+
 <body>
     <header class="header">
         <h1>RSS Feed News</h1>
@@ -33,10 +38,12 @@
     <!-- 🔻 NEW: Feed manager section -->
     <section class="rss-manager">
         <form id="rss-form">
-
             <input type="text" id="rss-name" class="form-control" placeholder="Feed name" required />
-            <input type="text" id="rss-icon" class="form-control"
-                placeholder="Font Awesome icon class (e.g. fa-solid fa-newspaper)" required />
+            <div class="icon-picker-holder">
+                <input type="text" id="rss-icon" class="form-control" placeholder="Search icons..." required />
+                <div id="iconsPopup" class="icon-picker-popup"></div>
+                <i id="iconPreview" class="icon-preview fas fa-icons"></i>
+            </div>
 
             <input type="url" id="new-rss-url" class="form-control" placeholder="Add new RSS feed URL" required />
             <button type="submit">Add Feed <i class="fas fa-plus"></i></button>
@@ -56,17 +63,25 @@
         </div>
     </section>
     <!-- 🔺 END NEW -->
-
+    <div class="filter-area">
+        <label for="cards-per-page">Cards per page:</label>
+        <select id="cards-per-page" class="cards-per-page-select">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+        </select>
+    </div>
     <main class="news-grid" id="news-container">
 
     </main>
- <nav aria-label="Page navigation" class="pagination-container">
-    <ul class="pagination justify-content-center" id="pagination">
-        <!-- Pagination will be dynamically generated here -->
-    </ul>
-</nav>
+    <nav aria-label="Page navigation" class="pagination-container">
+        <ul class="pagination justify-content-center" id="pagination">
+            <!-- Pagination will be dynamically generated here -->
+        </ul>
+    </nav>
 
     <script src="dist/js/script.min.js"></script>
+    <script src="dist/js/font-awesome-icon.min.js"></script>
 </body>
 
 </html>

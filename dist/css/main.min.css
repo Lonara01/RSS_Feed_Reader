@@ -92,6 +92,8 @@ body {
 }
 #saved-feeds-list.collapsed {
   max-height: 0;
+  padding: 0;
+  margin: 0;
 }
 #saved-feeds-list li {
   padding: 0.5rem 0.75rem;
@@ -237,6 +239,76 @@ label {
 }
 #rss-form button:hover {
   background-color: #1b7d95;
+}
+#rss-form .icon-picker-holder {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+#rss-form .icon-picker-holder input {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 0px;
+}
+#rss-form .icon-picker-holder .icon-preview {
+  font-size: 21px;
+  color: #fff;
+  background: #383838;
+  padding: 8px;
+  align-self: center;
+  right: 0;
+  cursor: pointer;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 6px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 6px;
+}
+#rss-form .icon-picker-holder .icon-picker-popup {
+  top: 38px;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 250px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+#rss-form .icon-picker-holder .icon-picker-popup i {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  background: #e9e9e9;
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.4s ease;
+}
+#rss-form .icon-picker-holder .icon-picker-popup i:hover {
+  background: #f0f0f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-area {
+  display: flex;
+  align-items: center;
+}
+.filter-area label {
+  color: #333;
+  font-weight: 500;
+  font-size: 22px;
+}
+.filter-area .cards-per-page-select {
+  padding: 4px 12px;
+  position: relative;
+  bottom: 0;
+  background: #fff;
+  border: none;
+  outline: none;
 }
 
 .news-grid {
