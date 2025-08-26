@@ -431,6 +431,8 @@ label {
     display: none;
 }
 
+li {}
+
 /* ~~~~~~~~~~~~~~~~~ Pagination Styles ~~~~~~~~~~~~~~~~~ */
 .pagination-container {
     margin: 2rem 0;
@@ -475,6 +477,12 @@ label {
             }
         }
     }
+}
+
+.ellipsis {
+    padding: 8px 12px;
+    color: #888;
+    user-select: none;
 }
 
 /* ~~~~~~~~~~~~~~~~~ End of Pagination Styles ~~~~~~~~~~~~~~~~~ */

@@ -424,5 +424,13 @@ label {
   opacity: 0.6;
 }
 
+.ellipsis {
+  padding: 8px 12px;
+  color: #888;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
 /* ~~~~~~~~~~~~~~~~~ End of Pagination Styles ~~~~~~~~~~~~~~~~~ */
 /*# sourceMappingURL=map/main.min.css.map */

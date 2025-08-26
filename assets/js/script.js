@@ -23,24 +23,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const feedIconInput = document.getElementById('rss-icon');
     const cardPerPageSelect = document.getElementById("cards-per-page");
 
+
     // Pagination değişkenleri
     let currentPage = 1;
-    var itemsPerPage = JSON.parse(localStorage.getItem(FEED_PER_PAGE)) || 10;
+    // var itemsPerPage = JSON.parse(localStorage.getItem(FEED_PER_PAGE)) || 10; 
+    let itemsPerPage = 10; // Default value
     var allNews = [];
 
 
+    // if (cardPerPageSelect) {
+    //     cardPerPageSelect.value = itemsPerPage;
+    //     cardPerPageSelect.addEventListener("change", function () {
+    //         currentPage = 1; // Reset to first page on change
+    //         itemsPerPage = this.value || 10; // Update items per page
+    //         renderPage(currentPage);
+    //         localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
+    //     });
+    // }
 
 
-
-    if (cardPerPageSelect) {
-        cardPerPageSelect.value = itemsPerPage;
-        cardPerPageSelect.addEventListener("change", function () {
-            // currentPage = 1; // Reset to first page on change
-            itemsPerPage = this.value || 10; // Update items per page
-            displayNews(allNews);
-            localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
-        });
-    }
 
 
     loadSavedFeeds();
@@ -306,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 : 'Unknown date';
             const image = item.imageUrl
-                ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
+                ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-title" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
                 : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
             card.innerHTML = `
     ${image}
@@ -321,44 +322,66 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     function renderPagination() {
-        pagination.innerHTML = '';
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
         const totalPages = Math.ceil(allNews.length / itemsPerPage);
 
+        if (totalPages <= 1) return; // No need for pagination if only one page
 
-        /* ~~~~~~~~~~~~~~~~~ previous button ~~~~~~~~~~~~~~~~~ */
-        const prevLi = document.createElement('li');
-        prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
-        prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
-        prevLi.addEventListener('click', () => {
+        // Prev Button
+        const prev = document.createElement('li');
+        prev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prev.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+        prev.addEventListener('click', (e) => {
+            e.preventDefault();
             if (currentPage > 1) {
                 currentPage--;
                 renderPage(currentPage);
                 renderPagination();
+            }
+        });
+        paginationContainer.appendChild(prev);
 
+        // Page Numbers with "..."
+        let pages = [];
+        if (totalPages <= 7) {
+            pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+        } else {
+            if (currentPage <= 4) {
+                pages = [1, 2, 3, 4, 5, '...', totalPages];
+            } else if (currentPage >= totalPages - 3) {
+                pages = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+            } else {
+                pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+            }
+        }
+        // 
+        pages.forEach(p => {
+            const li = document.createElement('li');
+            li.className = `page-item ${p === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#">${p}</a>`;
+
+            if (p !== '...') {
+                li.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentPage = p;
+                    renderPage(currentPage);
+                    renderPagination();
+                });
+            } else {
+                li.classList.add('disabled');
             }
 
+            paginationContainer.appendChild(li);
         });
-        pagination.appendChild(prevLi);
 
-        //page numbers
-
-        for (let i = 1; i <= totalPages; i++) {
-            const li = document.createElement('li');
-            li.className = 'page-item' + (i === currentPage ? ' active' : '');
-            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-            li.addEventListener('click', () => {
-                currentPage = i;
-                renderPage(currentPage);
-                renderPagination();
-            });
-            pagination.appendChild(li);
-
-        }
-        //next 
-        const nextLi = document.createElement('li');
-        nextLi.className = 'page-item' + (currentPage === totalPages ? 'disabled' : '');
-        nextLi.innerHTML = `<a class ="page-link" href= "#">&raquo;</a>`;
-        nextLi.addEventListener('click', () => {
+        // Next Button
+        const next = document.createElement('li');
+        next.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        next.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+        next.addEventListener('click', (e) => {
+            e.preventDefault();
             if (currentPage < totalPages) {
                 currentPage++;
                 renderPage(currentPage);
@@ -366,12 +389,67 @@ document.addEventListener('DOMContentLoaded', function () {
 
             }
         });
-        pagination.appendChild(nextLi);
-
+        paginationContainer.appendChild(next);
     }
 
+    // function renderPagination() {
+    //     pagination.innerHTML = '';
+    //     const totalPages = Math.ceil(allNews.length / itemsPerPage);
 
+    //     // Prev button
+    //     const prevLi = document.createElement('li');
+    //     prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+    //     prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+    //     prevLi.addEventListener('click', () => {
+    //         if (currentPage > 1) {
+    //             currentPage--;
+    //             renderPage(currentPage);
+    //             renderPagination();
+    //         }
+    //     });
+    //     pagination.appendChild(prevLi);
 
+    //     // Page numbers with "..."
+    //     let maxVisible = 5;
+    //     for (let i = 1; i <= totalPages; i++) {
+    //         if (
+    //             i === 1 ||
+    //             i === totalPages ||
+    //             (i >= currentPage - 1 && i <= currentPage + 1)
+    //         ) {
+    //             const li = document.createElement('li');
+    //             li.className = 'page-item' + (i === currentPage ? ' active' : '');
+    //             li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+    //             li.addEventListener('click', () => {
+    //                 currentPage = i;
+    //                 renderPage(currentPage);
+    //                 renderPagination();
+    //             });
+    //             pagination.appendChild(li);
+    //         } else if (
+    //             i === currentPage - 2 ||
+    //             i === currentPage + 2
+    //         ) {
+    //             const li = document.createElement('li');
+    //             li.className = 'page-item disabled';
+    //             li.innerHTML = `<span class="page-link">...</span>`;
+    //             pagination.appendChild(li);
+    //         }
+    //     }
+
+    //     // Next button
+    //     const nextLi = document.createElement('li');
+    //     nextLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+    //     nextLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+    //     nextLi.addEventListener('click', () => {
+    //         if (currentPage < totalPages) {
+    //             currentPage++;
+    //             renderPage(currentPage);
+    //             renderPagination();
+    //         }
+    //     });
+    //     pagination.appendChild(nextLi);
+    // }
 });
 
 // ════════════════════════════════════════════════

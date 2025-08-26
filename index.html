@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 </head>
 
 <body>
@@ -38,6 +37,7 @@
     <!-- 🔻 NEW: Feed manager section -->
     <section class="rss-manager">
         <form id="rss-form">
+
             <input type="text" id="rss-name" class="form-control" placeholder="Feed name" required />
             <div class="icon-picker-holder">
                 <input type="text" id="rss-icon" class="form-control" placeholder="Search icons..." required />
@@ -71,12 +71,16 @@
             <option value="30">30</option>
         </select>
     </div>
+
     <main class="news-grid" id="news-container">
 
     </main>
     <nav aria-label="Page navigation" class="pagination-container">
-        <ul class="pagination justify-content-center" id="pagination">
-            <!-- Pagination will be dynamically generated here -->
+
+        <ul id="pagination" class="pagination"></ul>
+
+        <!-- <ul class="pagination justify-content-center" id="pagination"> -->
+        <!-- Pagination will be dynamically generated here -->
         </ul>
     </nav>
 
