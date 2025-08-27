@@ -1,4 +1,5 @@
 @use "variables";
+@use "sass:color";
 
 // Base styles
 * {
@@ -9,7 +10,7 @@
 }
 
 body {
-    background-color: variables.$secondary-color;
+    background-color: variables.$body-background;
     line-height: 1.6;
     padding: 20px;
 
@@ -18,6 +19,24 @@ body {
     }
 }
 
+// Common button styles
+%button-styles {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button {
+    @extend %button-styles;
+}
+
+input {
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+// Header
 .header {
     text-align: center;
     margin-bottom: 0.8rem;
@@ -31,17 +50,18 @@ body {
     }
 
     h1 {
-        color: variables.$light-gray;
+        color: variables.$accent-color;
         margin-bottom: 1rem;
         font-size: 1.5rem;
     }
 }
 
+// RSS List
 #rss-list {
     background-color: variables.$primary-color;
     padding: 1rem;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: variables.$card-shadow;
     width: 90%;
     max-width: 90%;
     margin: 1rem auto;
@@ -59,16 +79,13 @@ body {
         flex-direction: row;
 
         #rss-list-collapse-btn {
+            @extend %button-styles;
             padding: 0.5rem 1rem;
             background-color: variables.$secondary-color;
             color: variables.$text-color;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
 
             &:hover {
-                background-color: variables.$secondary-color;
+                background-color: variables.$hover-color;
             }
         }
     }
@@ -76,11 +93,12 @@ body {
     h4 {
         margin-bottom: 0.75rem;
         font-size: 1.2rem;
-        color: variables.$light-gray;
+        color: variables.$accent-color;
         text-align: center;
     }
 }
 
+// Saved feeds
 #saved-feeds-list {
     list-style: none;
     padding: 20px;
@@ -110,29 +128,20 @@ body {
 
         &.feed-item {
             border-radius: 8px;
-            padding: 0px;
-            justify-content: space-between;
+            padding: 0;
             display: flex;
-            background-color: #015470;
+            justify-content: space-between;
+            background-color: variables.$background-dark;
             position: relative;
 
             &.active-feed {
-                background-color: rgb(42, 173, 225);
-                box-shadow: rgba(0, 0, 0, 0.25) 0px 12px 24px, rgba(0, 0, 0, 0.22) 0px 10px 10px !important;
-
-                // &:before {
-                //     content: "\f005";
-                //     font-family: "Font Awesome 6 Free";
-                //     position: absolute;
-                //     top: -15px;
-                //     left: -7px;
-                //     font-size: 12px;
-                //     color: #023e8a;
-                // }
+                background-color: variables.$secondary-color;
+                box-shadow: rgba(0, 0, 0, 0.25) 0px 12px 24px,
+                    rgba(0, 0, 0, 0.22) 0px 10px 10px !important;
             }
 
             .feed-toggle {
-                color: #fff;
+                color: variables.$text-color;
                 font-size: 15px;
                 font-weight: 500;
             }
@@ -152,6 +161,7 @@ body {
     }
 }
 
+// Label
 label {
     display: flex;
     align-items: center;
@@ -159,6 +169,7 @@ label {
     padding: 6px;
 }
 
+// Feed toggle
 .feed-toggle {
     background: transparent;
     border: 1px solid transparent;
@@ -174,6 +185,7 @@ label {
     }
 }
 
+// Feed controls
 .feed-controls {
     display: flex;
     justify-content: center;
@@ -192,27 +204,25 @@ label {
 
     input {
         padding: 0.5rem 1rem;
-        border: 1px solid #f5f5f8;
+        border: 1px solid variables.$background-light;
         border-radius: 4px;
         width: 400px;
         max-width: 80%;
     }
 
     button {
+        @extend %button-styles;
         padding: 0.5rem 1.5rem;
         background-color: variables.$secondary-color;
         color: variables.$text-color;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
 
         &:hover {
-            background-color: variables.$secondary-color;
+            background-color: variables.$hover-color;
         }
     }
 }
 
+// RSS Manager
 .rss-manager {
     width: 100%;
     max-width: 100%;
@@ -220,16 +230,16 @@ label {
     padding: 1rem;
     background-color: variables.$text-color;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: variables.$card-shadow;
 }
 
+// RSS Form
 #rss-form {
     width: 90%;
     display: flex;
-    flex-direction: row;
     gap: 0.5rem;
     margin: 0 auto;
-    padding: 1rem 1rem;
+    padding: 1rem;
     background-color: variables.$primary-color;
     border-radius: 8px;
 
@@ -243,27 +253,22 @@ label {
         padding: 0.5rem 0.75rem;
         font-size: 1rem;
         width: 100%;
-        border: 1px solid #b3d6ff;
+        border: 1px solid variables.$border-color;
         border-radius: 6px;
-        outline: none;
-        transition: border-color 0.2s;
 
         &:focus {
-            border-color: #03485f;
+            border-color: variables.$accent-color;
         }
     }
 
     button {
+        @extend %button-styles;
         padding: 0.5rem 1rem;
         background-color: variables.$secondary-color;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.4s;
+        color: variables.$text-color;
 
         &:hover {
-            background-color: #1b7d95;
+            background-color: variables.$hover-color;
         }
     }
 
@@ -273,31 +278,23 @@ label {
         position: relative;
 
         input {
-            border-bottom-left-radius: 6px;
-            border-bottom-right-radius: 0px;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 0px;
+            border-radius: 6px 0 0 6px;
         }
 
         .icon-preview {
             font-size: 21px;
-            color: #fff;
-            background: #383838;
+            color: variables.$text-color;
+            background: variables.$icon-bg;
             padding: 8px;
-            align-self: center;
-            right: 0;
             cursor: pointer;
-            border-bottom-left-radius: 0px;
-            border-bottom-right-radius: 6px;
-            border-top-left-radius: 0px;
-            border-top-right-radius: 6px;
+            border-radius: 0 6px 6px 0;
         }
 
         .icon-picker-popup {
             top: 38px;
             position: absolute;
-            background: #fff;
-            border: 1px solid #ccc;
+            background: variables.$text-color;
+            border: 1px solid variables.$muted-text-color;
             padding: 10px;
             display: none;
             grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
@@ -305,135 +302,344 @@ label {
             max-height: 200px;
             overflow-y: auto;
             width: 250px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: variables.$card-shadow;
             z-index: 1000;
 
             i {
                 font-size: 20px;
                 cursor: pointer;
                 padding: 8px;
-                background: #e9e9e9;
+                background: variables.$background-light;
                 border-radius: 6px;
                 text-align: center;
                 transition: all 0.4s ease;
 
                 &:hover {
-                    background: #f0f0f0;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    background: color.scale(variables.$background-light, $lightness: 3%);
+
+                    box-shadow: variables.$card-shadow;
                 }
             }
         }
     }
 }
 
-.filter-area {
+// Filter and View Wrapper
+.filter-and-view-wrapper {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: variables.$primary-color;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), variables.$card-shadow;
 
-    label {
-        color: #333;
-        font-weight: 500;
-        font-size: 22px;
+    @media (max-width: variables.$breakpoint-small) {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 0.75rem;
     }
 
-    .cards-per-page-select {
-        padding: 4px 12px;
-        position: relative;
-        bottom: 0;
-        background: #fff;
-        border: none;
+    .filter-area,
+    .view-option-area {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    label {
+        color: variables.$accent-color;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+        letter-spacing: 0.01em;
+    }
+
+    select {
+        padding: 8px 18px;
+        background: variables.$text-color;
+        border: 1px solid variables.$border-color;
+        border-radius: 8px;
         outline: none;
+        font-size: 1rem;
+        color: variables.$accent-color;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+            border-color: variables.$accent-color;
+            box-shadow: 0 0 0 2px color.scale(variables.$accent-color, $alpha: -80%);
+        }
+
+        &:hover {
+            border-color: variables.$secondary-color;
+        }
+    }
+
+    @media (max-width: variables.$breakpoint-small) {
+
+        .filter-area,
+        .view-option-area {
+            width: 100%;
+            justify-content: space-between;
+        }
     }
 }
 
-.news-grid {
+// News container
+.news-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
     padding: 20px 0;
 
+    &.list-view {
+        grid-template-columns: 1fr;
+    }
+
     @media (max-width: variables.$breakpoint-small) {
         gap: variables.$base-spacing;
 
-        .news-card {
-            .news-image {
-                height: 120px;
-            }
+        .news-card-grid .news-image {
+            height: 120px;
         }
     }
 
-    .news-card {
-        background-color: white;
+    .news-card-grid {
+        background-color: variables.$text-color;
         overflow: hidden;
-        box-shadow: variables.$card-shadow;
-        transition: transform 0.5s;
-        border-radius: 2%;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), variables.$card-shadow;
+        transition: box-shadow 0.3s, transform 0.3s;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        min-height: 380px;
+        position: relative;
 
         &:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), variables.$card-shadow;
+            transform: translateY(-6px) scale(1.02);
         }
 
         .news-image {
             width: 100%;
-            height: 150px;
+            height: 180px;
             object-fit: cover;
-            border-radius: 2%;
+            border-radius: 12px 12px 0 0;
+            background: variables.$background-light;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .news-content {
-            padding: 1.5rem;
+            flex: 1;
+            padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
 
             .news-title {
-                font-size: 1.2rem;
-                margin-bottom: 0.5rem;
-                color: variables.$light-gray;
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.6rem;
+                color: variables.$accent-color;
+                line-height: 1.3;
+                letter-spacing: 0.01em;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: variables.$secondary-color;
+                }
             }
 
             .news-description {
-                color: #666;
-                font-size: 0.9rem;
-                margin-bottom: 1rem;
+                color: variables.$muted-text-color;
+                font-size: 1rem;
+                margin-bottom: 1.1rem;
+                line-height: 1.6;
+                flex: 1;
+            }
+
+            .news-date {
+                color: variables.$secondary-color;
+                font-size: 0.85rem;
+                margin-bottom: 0.7rem;
+                opacity: 0.8;
             }
 
             .news-link {
                 display: inline-block;
                 color: variables.$secondary-color;
                 text-decoration: none;
-                font-weight: bold;
-                font-size: 0.9rem;
+                font-weight: 600;
+                font-size: 0.95rem;
+                padding: 0.4rem 1rem;
+                border-radius: 6px;
+                background: color.scale(variables.$secondary-color, $lightness: 85%);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                transition: background 0.2s, color 0.2s;
 
                 &:hover {
+                    background: variables.$secondary-color;
+                    color: variables.$text-color;
                     text-decoration: underline;
                 }
             }
+        }
+    }
+
+    .news-card-list {
+        display: flex;
+        align-items: flex-start;
+        background: variables.$text-color;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10), variables.$card-shadow;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.3s;
+        min-height: 180px;
+        position: relative;
+
+        &:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16), variables.$card-shadow;
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .news-list-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        .news-list-image {
+            flex: 0 0 160px;
+            height: auto;
+            background: variables.$background-light;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .news-image,
+            .placeholder {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 12px 0 0 12px;
+                background: variables.$background-light;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: variables.$muted-text-color;
+                font-size: 2.2rem;
+            }
+        }
+
+        .news-list-content {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .news-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: variables.$accent-color;
+                line-height: 1.3;
+                letter-spacing: 0.01em;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: variables.$secondary-color;
+                }
+            }
+
+            .news-description {
+                font-size: 1rem;
+                color: variables.$muted-text-color;
+                margin-bottom: 1rem;
+                line-height: 1.6;
+                flex: 1;
+            }
 
             .news-date {
+                font-size: 0.85rem;
                 color: variables.$secondary-color;
+                margin-bottom: 0.7rem;
+                opacity: 0.8;
+            }
+
+            .news-link {
+                align-self: flex-start;
+                display: inline-block;
+                color: variables.$secondary-color;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+                padding: 0.4rem 1rem;
+                border-radius: 6px;
+                background: color.scale(variables.$secondary-color, $lightness: 85%);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                transition: background 0.2s, color 0.2s;
+
+                &:hover {
+                    background: variables.$secondary-color;
+                    color: variables.$text-color;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        @media (max-width: variables.$breakpoint-small) {
+            flex-direction: column;
+
+
+            .news-list-wrapper {
+                flex-direction: column;
+
+                .news-list-image {
+                    width: 100%;
+                    height: 120px;
+
+                    .news-image,
+                    .placeholder {
+                        border-radius: 12px 12px 0 0;
+                    }
+                }
+            }
+
+
+            .news-list-content {
+                padding: 1rem;
             }
         }
     }
 }
 
+// Loading
 .loading {
     text-align: center;
     padding: 2rem;
     font-size: 1.2rem;
-    color: #666;
+    color: variables.$muted-text-color;
 }
 
-@media (max-width: 768px) {
+// Media queries
+@media (max-width: variables.$breakpoint-medium) {
     .news-grid {
         grid-template-columns: 1fr;
     }
 }
 
+// Hidden checkbox
 .feed-checkbox {
     display: none;
 }
 
-li {}
-
-/* ~~~~~~~~~~~~~~~~~ Pagination Styles ~~~~~~~~~~~~~~~~~ */
+/* Pagination */
 .pagination-container {
     margin: 2rem 0;
     display: flex;
@@ -450,39 +656,37 @@ li {}
                 display: inline-block;
                 padding: 0.5rem 1rem;
                 border-radius: 8px;
-                background-color: #023e8a;
-                color: #fff;
+                background-color: variables.$accent-color;
+                color: variables.$text-color;
                 font-weight: 500;
                 text-decoration: none;
                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease;
 
                 &:hover {
-                    background-color: #0096c7;
+                    background-color: variables.$secondary-color;
                     transform: translateY(-3px);
                 }
             }
 
             &.active .page-link {
-                background-color: #90e0ef;
+                background-color: variables.$primary-color;
                 font-weight: bold;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             }
 
             &.disabled .page-link {
-                background-color: #ccc;
-                color: #666;
+                background-color: variables.$secondary-color;
+                color: variables.$body-text-color;
                 pointer-events: none;
-                opacity: 0.6;
+                opacity: 0.5;
             }
         }
     }
-}
 
-.ellipsis {
-    padding: 8px 12px;
-    color: #888;
-    user-select: none;
+    .ellipsis {
+        padding: 8px 12px;
+        color: variables.$muted-text-color;
+        user-select: none;
+    }
 }
-
-/* ~~~~~~~~~~~~~~~~~ End of Pagination Styles ~~~~~~~~~~~~~~~~~ */

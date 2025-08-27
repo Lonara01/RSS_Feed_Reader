@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const feedNameInput = document.getElementById('rss-name');
     const feedIconInput = document.getElementById('rss-icon');
     const cardPerPageSelect = document.getElementById("cards-per-page");
+    const viewStyleSelect = document.getElementById("view-style");
 
 
     // Pagination değişkenleri
@@ -41,9 +42,16 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
         });
     }
-
-
-
+    if (viewStyleSelect) {
+        viewStyleSelect.addEventListener("change", function () {
+            newsContainer.classList.toggle("list-view", this.value === "list");
+            renderPage(currentPage);
+            localStorage.setItem("viewStyle", this.value);
+        });
+        
+        viewStyleSelect.value = localStorage.getItem("viewStyle") || "grid";
+        newsContainer.classList.toggle("list-view", viewStyleSelect.value === "list");
+    }
 
     loadSavedFeeds();
 
@@ -108,6 +116,73 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteBtn.style.cursor = 'pointer';
         deleteBtn.style.fontSize = '16px';
         return deleteBtn;
+    }
+
+    function createGridNewsCard(item) {
+        const card = document.createElement('article');
+
+        card.className = 'news-card-grid';
+
+        const cleanDescription = item.description
+            ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
+            : 'No Description available';
+        const pubDate = item.pubDate
+            ? new Date(item.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            })
+            : 'Unknown date';
+        const image = item.imageUrl
+            ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
+            : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
+        card.innerHTML = `
+             ${image}
+            <div class="news-content">
+                <h3 class="news-title">${item.title || 'No title'}</h3>
+                <p class="news-description">${cleanDescription}</p>
+                <p class="news-date">${pubDate}</p>
+                <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read More</a>
+            </div>
+        `;
+        return card;
+    }
+
+    function createListNewsCard(item) {
+        const card = document.createElement('article');
+        card.className = 'news-card-list';
+
+        const cleanDescription = item.description
+            ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
+            : 'No Description available';
+        const pubDate = item.pubDate
+            ? new Date(item.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            })
+            : 'Unknown date';
+
+        const image = item.imageUrl
+            ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" 
+              onerror="this.src='https://placehold.co/150x100?text=No+Image'">`
+            : `<div class="news-image placeholder">No Image</div>`;
+
+        // STRUCTURE: image left, content right
+        card.innerHTML = `
+        <div class="news-list-wrapper">
+            <div class="news-list-image">
+                ${image}
+            </div>
+            <div class="news-list-content">
+                <h3 class="news-title">${item.title || 'No title'}</h3>
+                <p class="news-description">${cleanDescription}</p>
+                <p class="news-date">${pubDate}</p>
+                <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read More</a>
+            </div>
+        </div>
+    `;
+        return card;
     }
 
 
@@ -302,32 +377,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         pageItems.forEach(item => {
-            const card = document.createElement('article');
-            card.className = 'news-card';
+            if (!item) return; // Skip if item is undefined or null
 
-            const cleanDescription = item.description
-                ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'
-                : 'No Description available';
-            const pubDate = item.pubDate
-                ? new Date(item.pubDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                })
-                : 'Unknown date';
-            const image = item.imageUrl
-                ? `<img src="${item.imageUrl}" alt="${item.title}" class="news-image" onerror="this.src='https://placehold.co/300x180?text=No+Image'">`
-                : `<div class="news-image" style="background: #eee; display : flex; align-items: center; justify-content: center; color:#999;">No Image</div>`;
-            card.innerHTML = `
-    ${image}
-    <div class="news-content">
-        <h3 class="news-title">${item.title || 'No title'}</h3>
-        <p class="news-description">${cleanDescription}</p>
-        <p class="news-date">${pubDate}</p>
-        <a href="${item.link || '#'}" class="news-link" target="_blank" rel="noopener noreferrer">Read More</a>
-    </div>
-`;
-            newsContainer.appendChild(card);
+            if (viewStyleSelect.value === 'grid') {
+                const card = createGridNewsCard(item);
+                newsContainer.appendChild(card);
+            }
+            if (viewStyleSelect.value === 'list') {
+                const card = createListNewsCard(item);
+                newsContainer.appendChild(card);
+            }
+
         });
     }
     function renderPagination() {

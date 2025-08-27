@@ -63,16 +63,27 @@
         </div>
     </section>
     <!-- 🔺 END NEW -->
-    <div class="filter-area">
-        <label for="cards-per-page">Cards per page:</label>
-        <select id="cards-per-page" class="cards-per-page-select">
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-        </select>
+    <div class="filter-and-view-wrapper">
+        <div class="filter-area">
+            <label for="cards-per-page">Cards per page:</label>
+            <select id="cards-per-page" class="cards-per-page-select">
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+            </select>
+        </div>
+
+        <div class="view-option-area">
+            <label for="view-style">View style:</label>
+            <select id="view-style" class="view-style-select">
+                <option value="grid" selected>Grid</option>
+                <option value="list">List</option>
+            </select>
+        </div>
+
     </div>
 
-    <main class="news-grid" id="news-container">
+    <main class="news-container" id="news-container">
 
     </main>
     <nav aria-label="Page navigation" class="pagination-container">

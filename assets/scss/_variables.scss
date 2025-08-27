@@ -1,12 +1,22 @@
-// Variables
-$primary-color: #90e0ef;
-$secondary-color: #0096c7;
-$text-color:#ffffff;
-$light-gray: #023e8a;
-$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-// Breakpoint 
+// Color Palette
+$primary-color: #89cff0; // Fresher Light Blue (slightly softer, less neon)
+$body-background: #0077b6bf; // Soft Blue (background)
+$secondary-color: #0077b6; // Stronger, deeper Blue (CTA / buttons)
+$accent-color: #03045e; // Bold Navy (better for headings/text contrast)
+$text-color: #ffffff; // White (on dark elements)
+$body-text-color: #2c2c2c; // Dark Gray (improves readability over #333)
+$muted-text-color: #6b7280; // Neutral Gray (modern muted text)
+$background-dark: #014f86; // Rich Blue (feeds/cards) — less dull than #015470
+$background-light: #f8fafc; // Very Light Cool Gray (better than flat #f5f5f8)
+$hover-color: #0096c7; // Lively Cyan for hover states (contrast boost)
+$icon-bg: #3a3a3a; // Slightly lighter charcoal for icons
+$border-color: #a7caff; // Softer, cooler border blue
+$card-shadow: 0 6px 12px rgba(0, 0, 0, 0.12); // a bit stronger for depth
+
+// Breakpoints
 $breakpoint-small: 480px;
 $breakpoint-medium: 768px;
 $breakpoint-large: 1024px;
-// Temel spacing 
+
+// Spacing
 $base-spacing: 1rem; // 16px
