@@ -1,7 +1,7 @@
 /* ╔════════════════════════════════════════════╗
    ║        C O N F I G   V A R I A B L E S     ║
    ╚════════════════════════════════════════════╝ */
-import { parserType, numberOfItems, FEED_STORAGE_KEY, FEED_PER_PAGE } from '../../assets/js/config.js'; // Get the config 
+import { parserType, numberOfItems, FEED_STORAGE_KEY, FEED_PER_PAGE, PHP_PARSER_URL } from '../../assets/js/config.js'; // Get the config 
 
 document.addEventListener('DOMContentLoaded', function () {
     /* ╔═══════════════════════════════════════╗
@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const newUrl = newFeedInput.value.trim();
         const newName = feedNameInput.value.trim();
         const newIcon = feedIconInput.value.trim();
-        console.log(`New Feed URL: ${newUrl}, Name: ${newName}, Icon: ${newIcon}`);
 
         if (newUrl && newName && newIcon) {
             saveFeedUrl(newUrl, newName, newIcon);
@@ -188,10 +187,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function saveFeedUrl(url, name, icon) {
         const feeds = getSavedFeeds();
-        console.log(`saving feed url: ${url}, name: ${name}, icon :${icon}`);
 
         const exists = feeds.some(feed => feed.url === url);
-        console.log(`Feed URL exists: ${exists}`);
 
         if (!exists) {
             feeds.push({ url: url, name, icon, check: true });
@@ -208,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function loadFeed(feedUrl) {
-        const phpURL = `https://abddomain.epizy.com/rss/rss_parsers/php_parser/index.php?url=${encodeURIComponent(feedUrl)}`;
+        const phpURL = `${PHP_PARSER_URL}?url=${encodeURIComponent(feedUrl)}`;
         const nodeURL = `http://localhost:3001/api/rss?url=${encodeURIComponent(feedUrl)}`;
         const apiURL = parserType === 'php' ? phpURL : nodeURL;
 
@@ -281,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Reload enabled feeds when the saved feeds list is loaded
     function reloadEnabledFeeds() {
         newsContainer.innerHTML = '';
-        allNews = []; // REST TO AVOİD THE DUPLICATION
+        allNews = []; // Reset to avoid duplication
         const feeds = getSavedFeeds();
         const enabledFeeds = feeds.filter(feed => feed.check);
         enabledFeeds.forEach(feed => {
@@ -321,11 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function setCheckBoxEvent(checkbox, feeds, feedObject) {
-        checkbox.addEventListener('change', () => {
-            handleCheckboxChange(checkbox, feeds, feedObject);
-        });
-    }
 
     function handleCheckboxChange(checkbox, feeds, feedObject) {
         feeds.map(feed => {
@@ -373,7 +365,6 @@ document.addEventListener('DOMContentLoaded', function () {
         newsContainer.innerHTML = '';
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        console.log(`Rendering page ${page}, items ${start} to ${end}`);
         const pageItems = allNews.slice(start, end);
 
 
