@@ -1,3 +1,4 @@
+import { FONT_AWESOME_ICONS_URL } from '../../assets/js/config.js'; // Get the config 
 document.addEventListener('DOMContentLoaded', function () {
     const feedIconInput = document.getElementById('rss-icon');
     const iconsPopup = document.getElementById("iconsPopup");
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadPopupIcons() {
         // Load icons first
-        fetch("../dist/json/font-awesome-free-icons.json")
+        fetch(FONT_AWESOME_ICONS_URL)
             .then(response => response.json())
             .then(data => {
                 icons = data.icons; // save icons

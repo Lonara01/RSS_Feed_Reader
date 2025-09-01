@@ -1,13 +1,9 @@
+/* ╔════════════════════════════════════════════╗
+   ║        C O N F I G   V A R I A B L E S     ║
+   ╚════════════════════════════════════════════╝ */
+import { parserType, numberOfItems, FEED_STORAGE_KEY, FEED_PER_PAGE } from '../../assets/js/config.js'; // Get the config 
+
 document.addEventListener('DOMContentLoaded', function () {
-
-    /* ╔════════════════════════════════════════════╗
-       ║        C O N F I G   V A R I A B L E S     ║
-       ╚════════════════════════════════════════════╝ */
-    const parserType = 'node'; // We can use 'php' if it needed
-    const FEED_STORAGE_KEY = 'savedFeeds';
-    const FEED_PER_PAGE = 10;
-
-
     /* ╔═══════════════════════════════════════╗
        ║           Define Elements             ║
        ╚═══════════════════════════════════════╝ */
@@ -25,31 +21,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const viewStyleSelect = document.getElementById("view-style");
 
 
-    // Pagination değişkenleri
+    // Pagination Variables
     let currentPage = 1;
-    var itemsPerPage = parseInt(JSON.parse(localStorage.getItem(FEED_PER_PAGE))) || 10;
-    // let itemsPerPage = 10; // Default value
+    var itemsPerPage = parseInt(JSON.parse(localStorage.getItem(FEED_PER_PAGE))) || numberOfItems;
     var allNews = [];
 
 
-    if (cardPerPageSelect) {
-        cardPerPageSelect.value = itemsPerPage;
-        cardPerPageSelect.addEventListener("change", function () {
-            currentPage = 1; // Reset to first page on change
-            itemsPerPage = parseInt(this.value) || 10; // Update items per page
-            renderPage(currentPage);
-            renderPagination();
-            localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
-        });
-    }
     if (viewStyleSelect) {
-        viewStyleSelect.addEventListener("change", function () {
-            newsContainer.classList.toggle("list-view", this.value === "list");
-            renderPage(currentPage);
-            localStorage.setItem("viewStyle", this.value);
-        });
-        
+        // Set the initial value from localStorage
         viewStyleSelect.value = localStorage.getItem("viewStyle") || "grid";
+        // Apply the selected view style
         newsContainer.classList.toggle("list-view", viewStyleSelect.value === "list");
     }
 
@@ -97,14 +78,31 @@ document.addEventListener('DOMContentLoaded', function () {
             : '<i class="fas fa-minus"></i>';
     });
 
+    if (viewStyleSelect) {
+        viewStyleSelect.addEventListener("change", function () {
+            newsContainer.classList.toggle("list-view", this.value === "list");
+            renderPage(currentPage);
+            localStorage.setItem("viewStyle", this.value);
+        });
+    }
+
+    if (cardPerPageSelect) {
+        cardPerPageSelect.value = itemsPerPage;
+        cardPerPageSelect.addEventListener("change", function () {
+            currentPage = 1; // Reset to first page on change
+            itemsPerPage = parseInt(this.value) || 10; // Update items per page
+            renderPage(currentPage);
+            renderPagination();
+            localStorage.setItem(FEED_PER_PAGE, JSON.stringify(itemsPerPage));
+        });
+    }
+
 
     /*
     ===============================
     | Elements Creator Functions |
     ===============================
    */
-
-
 
     function createDeleteButton() {
         const deleteBtn = document.createElement('button');
@@ -279,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         reloadEnabledFeeds();
     }
+
     // Reload enabled feeds when the saved feeds list is loaded
     function reloadEnabledFeeds() {
         newsContainer.innerHTML = '';
@@ -290,9 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         // Set event listener for delete button
-       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 
     function setDeleteBtnListener(deleteBtn, feeds, feedObject) {
         deleteBtn.addEventListener('click', () => {
@@ -329,6 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
             handleCheckboxChange(checkbox, feeds, feedObject);
         });
     }
+
     function handleCheckboxChange(checkbox, feeds, feedObject) {
         feeds.map(feed => {
             if (feed.url === feedObject.url) {
@@ -341,6 +339,7 @@ document.addEventListener('DOMContentLoaded', function () {
         reloadEnabledFeeds();
 
     }
+
     function getSavedFeeds() {
         const feeds = JSON.parse(localStorage.getItem(FEED_STORAGE_KEY)) || [];
         return feeds;
@@ -368,6 +367,8 @@ document.addEventListener('DOMContentLoaded', function () {
         renderPage(currentPage);
         renderPagination();
     }
+
+
     function renderPage(page) {
         newsContainer.innerHTML = '';
         const start = (page - 1) * itemsPerPage;
@@ -390,6 +391,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
     }
+
+
     function renderPagination() {
         const paginationContainer = document.querySelector('.pagination');
         paginationContainer.innerHTML = '';

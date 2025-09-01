@@ -54,6 +54,7 @@ try {
             'title' => $item->get_title(),
             'description' => $item->get_description(),
             'link' => $item->get_link(),
+            'pubDate' => $item->get_date('c'),
             'imageUrl' => $imageUrl,
         ];
     }
