@@ -84,8 +84,8 @@ Before starting, make sure you have installed the following (choose either Node.
 ### 2. 🗂️ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/rss-feed-reader.git
-cd rss-feed-reader
+git clone https://github.com/Lonara01/RSS_Feed_Reader.git
+cd RSS_Feed_Reader
 ```
 
 ---
