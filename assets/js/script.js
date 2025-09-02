@@ -1,7 +1,9 @@
 /* ╔════════════════════════════════════════════╗
    ║        C O N F I G   V A R I A B L E S     ║
    ╚════════════════════════════════════════════╝ */
-import { parserType, numberOfItems, FEED_STORAGE_KEY, FEED_PER_PAGE, PHP_PARSER_URL } from '../../assets/js/config.js'; // Get the config 
+import { parserType, numberOfItems,  PHP_PARSER_URL } from '../../assets/js/config.js'; // Get the config 
+var FEED_STORAGE_KEY = 'savedFeeds';
+var FEED_PER_PAGE = 'feedPerPage';
 
 document.addEventListener('DOMContentLoaded', function () {
     /* ╔═══════════════════════════════════════╗
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Pagination Variables
     let currentPage = 1;
-    var itemsPerPage = parseInt(JSON.parse(localStorage.getItem(FEED_PER_PAGE))) || numberOfItems;
+    var itemsPerPage = parseInt(JSON.parse(localStorage.getItem(FEED_PER_PAGE))) || numberOfItems[0];
     var allNews = [];
 
 
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (cardPerPageSelect) {
+        cardPerPageSelect.innerHTML = numberOfItems.map(item => `<option value="${item}">${item}</option>`).join('');
         cardPerPageSelect.value = itemsPerPage;
         cardPerPageSelect.addEventListener("change", function () {
             currentPage = 1; // Reset to first page on change
